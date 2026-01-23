@@ -19,7 +19,6 @@ a {
 
 body {
   background: #f4f6fa;
-  padding-bottom: 60px;
 }
 
 body.dark {
@@ -37,9 +36,5 @@ body.dark {
 @media (max-width: 480px) {
   html {
     font-size: 13px;
-  }
-  
-  body {
-    padding-bottom: 50px;
   }
 }

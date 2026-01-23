@@ -1,14 +1,12 @@
 .container {
   width: 100%;
-  min-height: 100vh;
   background: #f4f6fa;
 }
 
 .main {
   width: 100%;
   margin: 0;
-  padding: 16px 12px;
-  min-height: 300px;
+  padding: 16px 12px 70px 12px;
 }
 
 /* Dark mode */
@@ -23,12 +21,12 @@
 /* Responsive styles */
 @media (max-width: 768px) {
   .main {
-    padding: 12px 8px;
+    padding: 12px 8px 60px 8px;
   }
 }
 
 @media (max-width: 480px) {
   .main {
-    padding: 8px 4px;
+    padding: 8px 4px 55px 4px;
   }
 }
