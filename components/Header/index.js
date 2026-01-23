@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import styles from './Header.module.css';
+import ThemeToggle from '../ThemeToggle';
 
 export default function Header({ 
   theme, 
@@ -52,12 +53,10 @@ export default function Header({
         onKeyDown={handleKeyDown}
       />
       
-      <button 
-        className={styles.button}
-        onClick={onToggleTheme}
-      >
-        {theme === 'dark' ? 'Light' : 'Dark'}
-      </button>
+      <ThemeToggle 
+        isDark={theme === 'dark'}
+        onToggle={onToggleTheme}
+      />
     </header>
   );
 }
