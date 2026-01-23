@@ -103,8 +103,11 @@ export default function SpeedDial({ tabs, searchQuery, onCloseTab, onCloseGroup,
       const container = containerRef.current;
       if (!container) return;
       
-      const groups = container.querySelectorAll('[data-group]');
-      if (groups.length === 0) return;
+      const groups = container.querySelectorAll('[data-group]:not([class*="removing"])');
+      if (groups.length === 0) {
+        container.style.height = '100px';
+        return;
+      }
       
       const containerWidth = container.clientWidth;
       
@@ -159,12 +162,20 @@ export default function SpeedDial({ tabs, searchQuery, onCloseTab, onCloseGroup,
       container.style.height = Math.max(...colHeights) + 'px';
     };
     
-    // Initial layout
-    calculateLayout();
+    // Initial layout with small delay to ensure DOM is ready
+    const initialTimeout = setTimeout(calculateLayout, 10);
+    
+    // Recalculate after a delay to handle animations
+    const animationTimeout = setTimeout(calculateLayout, 300);
     
     // Recalculate on window resize
     window.addEventListener('resize', calculateLayout);
-    return () => window.removeEventListener('resize', calculateLayout);
+    
+    return () => {
+      clearTimeout(initialTimeout);
+      clearTimeout(animationTimeout);
+      window.removeEventListener('resize', calculateLayout);
+    };
   }, [sortedGroups]);
 
   if (typeof window !== 'undefined' && !isChromeAvailable()) {
