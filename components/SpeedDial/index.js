@@ -95,50 +95,76 @@ export default function SpeedDial({ tabs, searchQuery, onCloseTab, onCloseGroup,
     setPinnedDomainsState(newPinned);
   };
 
-  // Masonry layout
+  // Masonry layout with responsive breakpoints
   useEffect(() => {
     if (!containerRef.current) return;
     
-    const container = containerRef.current;
-    const groups = container.querySelectorAll('[data-group]');
-    
-    if (groups.length === 0) return;
-    
-    const containerWidth = container.clientWidth;
-    const minTileWidth = 220;
-    const maxTileWidth = 320;
-    const gap = 24;
-    
-    let columns = Math.floor((containerWidth + gap) / (minTileWidth + gap));
-    if (columns < 1) columns = 1;
-    
-    let tileWidth = Math.floor((containerWidth - gap * (columns - 1)) / columns);
-    if (tileWidth > maxTileWidth) {
-      tileWidth = maxTileWidth;
-      columns = Math.floor((containerWidth + gap) / (tileWidth + gap));
-      if (columns < 1) columns = 1;
-      tileWidth = Math.floor((containerWidth - gap * (columns - 1)) / columns);
-    }
-    
-    const colHeights = Array(columns).fill(0);
-    
-    groups.forEach((group) => {
-      group.style.position = 'absolute';
-      group.style.width = tileWidth + 'px';
+    const calculateLayout = () => {
+      const container = containerRef.current;
+      if (!container) return;
       
-      let minCol = 0;
-      for (let c = 1; c < columns; ++c) {
-        if (colHeights[c] < colHeights[minCol]) minCol = c;
+      const groups = container.querySelectorAll('[data-group]');
+      if (groups.length === 0) return;
+      
+      const containerWidth = container.clientWidth;
+      
+      // Responsive breakpoints
+      let minTileWidth, maxTileWidth, gap;
+      if (containerWidth <= 480) {
+        // Mobile: single column or 2 columns
+        minTileWidth = 140;
+        maxTileWidth = 200;
+        gap = 12;
+      } else if (containerWidth <= 768) {
+        // Tablet
+        minTileWidth = 180;
+        maxTileWidth = 260;
+        gap = 16;
+      } else {
+        // Desktop
+        minTileWidth = 220;
+        maxTileWidth = 320;
+        gap = 24;
       }
       
-      const left = minCol * (tileWidth + gap);
-      const top = colHeights[minCol];
-      group.style.left = left + 'px';
-      group.style.top = top + 'px';
-      colHeights[minCol] += group.offsetHeight + gap;
-    });
+      let columns = Math.floor((containerWidth + gap) / (minTileWidth + gap));
+      if (columns < 1) columns = 1;
+      
+      let tileWidth = Math.floor((containerWidth - gap * (columns - 1)) / columns);
+      if (tileWidth > maxTileWidth) {
+        tileWidth = maxTileWidth;
+        columns = Math.floor((containerWidth + gap) / (tileWidth + gap));
+        if (columns < 1) columns = 1;
+        tileWidth = Math.floor((containerWidth - gap * (columns - 1)) / columns);
+      }
+      
+      const colHeights = Array(columns).fill(0);
+      
+      groups.forEach((group) => {
+        group.style.position = 'absolute';
+        group.style.width = tileWidth + 'px';
+        
+        let minCol = 0;
+        for (let c = 1; c < columns; ++c) {
+          if (colHeights[c] < colHeights[minCol]) minCol = c;
+        }
+        
+        const left = minCol * (tileWidth + gap);
+        const top = colHeights[minCol];
+        group.style.left = left + 'px';
+        group.style.top = top + 'px';
+        colHeights[minCol] += group.offsetHeight + gap;
+      });
+      
+      container.style.height = Math.max(...colHeights) + 'px';
+    };
     
-    container.style.height = Math.max(...colHeights) + 'px';
+    // Initial layout
+    calculateLayout();
+    
+    // Recalculate on window resize
+    window.addEventListener('resize', calculateLayout);
+    return () => window.removeEventListener('resize', calculateLayout);
   }, [sortedGroups]);
 
   if (typeof window !== 'undefined' && !isChromeAvailable()) {

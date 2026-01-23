@@ -43,3 +43,26 @@
 :global(body.dark) .separator {
   color: #444857;
 }
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .footer {
+    padding: 12px;
+  }
+  
+  .footer a {
+    margin: 0 8px;
+    font-size: 0.85em;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 10px 8px;
+  }
+  
+  .footer a {
+    margin: 0 6px;
+    font-size: 0.8em;
+  }
+}

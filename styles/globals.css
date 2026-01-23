@@ -26,3 +26,20 @@ body.dark {
   background: #181a20;
   color: #f5f6fa;
 }
+
+/* Responsive font sizing */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
+  
+  body {
+    padding-bottom: 50px;
+  }
+}

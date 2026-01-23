@@ -27,3 +27,21 @@
 :global(body.dark) .input::placeholder {
   color: #888;
 }
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .input {
+    max-width: 100%;
+    margin: 12px 16px;
+    width: calc(100% - 32px);
+  }
+}
+
+@media (max-width: 480px) {
+  .input {
+    margin: 10px 12px;
+    width: calc(100% - 24px);
+    padding: 8px 12px;
+    font-size: 1em;
+  }
+}

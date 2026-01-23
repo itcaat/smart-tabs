@@ -73,3 +73,48 @@
   background: #3a2323;
   color: #ffb4b4;
 }
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .tab {
+    gap: 6px;
+    padding: 3px 0;
+  }
+  
+  .favicon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .title {
+    font-size: 0.9em;
+    max-width: 140px;
+  }
+  
+  .closeButton {
+    font-size: 1em;
+    padding: 2px 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab {
+    gap: 4px;
+    padding: 2px 0;
+  }
+  
+  .favicon {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .title {
+    font-size: 0.85em;
+    max-width: 80px;
+  }
+  
+  .closeButton {
+    font-size: 0.9em;
+    padding: 2px 3px;
+  }
+}

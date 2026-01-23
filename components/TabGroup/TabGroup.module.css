@@ -125,3 +125,53 @@
   background: #3a2323;
   color: #ffb4b4;
 }
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .group {
+    min-width: 180px;
+    max-width: 280px;
+    padding: 14px 12px 10px 12px;
+  }
+  
+  .header {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .favicon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .domain {
+    font-size: 0.95em;
+  }
+}
+
+@media (max-width: 480px) {
+  .group {
+    min-width: 150px;
+    max-width: 100%;
+    padding: 12px 10px 8px 10px;
+  }
+  
+  .favicon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .domain {
+    font-size: 0.9em;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .pinButton,
+  .closeAllButton {
+    font-size: 1em;
+    padding: 2px 3px;
+  }
+}
