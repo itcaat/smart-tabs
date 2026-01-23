@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import styles from '../../styles/Pages.module.css';
 import Header from '../Header';
-import SearchInput from '../SearchInput';
 import SpeedDial from '../SpeedDial';
 import Footer from '../Footer';
 
@@ -207,13 +206,11 @@ export default function Index() {
         onToggleTheme={toggleTheme}
         duplicateCount={duplicateCount}
         onRemoveDuplicates={handleRemoveDuplicates}
+        searchValue={searchQuery}
+        onSearchChange={handleSearch}
+        onSearchSubmit={handleSearchSubmit}
       />
       <main className={styles.main}>
-        <SearchInput 
-          value={searchQuery}
-          onChange={handleSearch}
-          onSubmit={handleSearchSubmit}
-        />
         <SpeedDial 
           tabs={tabs}
           searchQuery={searchQuery}
