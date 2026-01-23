@@ -33,10 +33,7 @@ export default function TabGroup({
 
   const handleCloseAll = (e) => {
     e.stopPropagation();
-    setIsRemoving(true);
-    setTimeout(() => {
-      onCloseGroup();
-    }, 260);
+    onCloseGroup();
   };
 
   const backgroundColor = domainColor(domain);

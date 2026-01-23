@@ -3,15 +3,48 @@ import styles from '../../styles/Pages.module.css';
 import Header from '../Header';
 import SpeedDial from '../SpeedDial';
 import Footer from '../Footer';
+import Modal from '../Modal';
 
 // Check if Chrome API is available (client-side only)
 const isChromeAvailable = () => typeof chrome !== 'undefined' && typeof chrome.tabs !== 'undefined';
+
+// Preference keys for "don't ask again"
+const PREF_SKIP_CLOSE_GROUP = 'skipCloseGroupConfirm';
+const PREF_SKIP_REMOVE_DUPLICATES = 'skipRemoveDuplicatesConfirm';
 
 export default function Index() {
   const [tabs, setTabs] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [theme, setTheme] = useState('light');
   const [duplicateCount, setDuplicateCount] = useState(0);
+  
+  // Modal state
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'warning',
+    onConfirm: () => {},
+    showDontAskAgain: false,
+    prefKey: null,
+  });
+
+  const closeModal = () => {
+    setModalConfig(prev => ({ ...prev, isOpen: false }));
+  };
+
+  // Handle "don't ask again" preference save
+  const handleDontAskAgainChange = (checked) => {
+    if (checked && modalConfig.prefKey && typeof window !== 'undefined') {
+      localStorage.setItem(modalConfig.prefKey, 'true');
+    }
+  };
+
+  // Check if we should skip confirmation
+  const shouldSkipConfirm = (prefKey) => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem(prefKey) === 'true';
+  };
 
   // Load tabs
   const loadTabs = useCallback(() => {
@@ -128,14 +161,41 @@ export default function Index() {
       }
       
       if (duplicateTabIds.length === 0) {
-        alert('No duplicate tabs found.');
+        setModalConfig({
+          isOpen: true,
+          title: 'No Duplicates',
+          message: 'No duplicate tabs found.',
+          type: 'info',
+          onConfirm: closeModal,
+          showDontAskAgain: false,
+          prefKey: null,
+        });
         return;
       }
       
-      if (!confirm(`Remove ${duplicateTabIds.length} duplicate tab(s)? This cannot be undone.`)) return;
+      const doRemove = () => {
+        chrome.tabs.remove(duplicateTabIds, () => {
+          setTabs(tabs.filter(tab => !duplicateTabIds.includes(tab.id)));
+        });
+      };
+
+      // Skip confirmation if user chose "don't ask again"
+      if (shouldSkipConfirm(PREF_SKIP_REMOVE_DUPLICATES)) {
+        doRemove();
+        return;
+      }
       
-      chrome.tabs.remove(duplicateTabIds, () => {
-        setTabs(tabs.filter(tab => !duplicateTabIds.includes(tab.id)));
+      setModalConfig({
+        isOpen: true,
+        title: 'Remove Duplicates',
+        message: `Remove ${duplicateTabIds.length} duplicate tab(s)?`,
+        type: 'danger',
+        onConfirm: () => {
+          doRemove();
+          closeModal();
+        },
+        showDontAskAgain: true,
+        prefKey: PREF_SKIP_REMOVE_DUPLICATES,
       });
     });
   };
@@ -159,20 +219,39 @@ export default function Index() {
       }
     });
     
-    if (!confirm(`Close ALL tabs for ${domain}? This cannot be undone.`)) return;
+    const doClose = () => {
+      tabsToClose.forEach(tab => {
+        chrome.tabs.remove(tab.id);
+      });
+      
+      setTabs(tabs.filter(t => {
+        try {
+          const url = new URL(t.url);
+          return url.hostname !== domain;
+        } catch {
+          return true;
+        }
+      }));
+    };
+
+    // Skip confirmation if user chose "don't ask again"
+    if (shouldSkipConfirm(PREF_SKIP_CLOSE_GROUP)) {
+      doClose();
+      return;
+    }
     
-    tabsToClose.forEach(tab => {
-      chrome.tabs.remove(tab.id);
+    setModalConfig({
+      isOpen: true,
+      title: 'Close All Tabs',
+      message: `Close ALL ${tabsToClose.length} tab(s) for ${domain}?`,
+      type: 'danger',
+      onConfirm: () => {
+        doClose();
+        closeModal();
+      },
+      showDontAskAgain: true,
+      prefKey: PREF_SKIP_CLOSE_GROUP,
     });
-    
-    setTabs(tabs.filter(t => {
-      try {
-        const url = new URL(t.url);
-        return url.hostname !== domain;
-      } catch {
-        return true;
-      }
-    }));
   };
 
   const handleActivateTab = (tab) => {
@@ -220,6 +299,19 @@ export default function Index() {
         />
       </main>
       <Footer />
+      
+      <Modal
+        isOpen={modalConfig.isOpen}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        type={modalConfig.type}
+        onConfirm={modalConfig.onConfirm}
+        onCancel={closeModal}
+        confirmText={modalConfig.type === 'info' ? 'OK' : 'Yes, do it'}
+        cancelText="Cancel"
+        showDontAskAgain={modalConfig.showDontAskAgain}
+        onDontAskAgainChange={handleDontAskAgainChange}
+      />
     </div>
   );
 }
