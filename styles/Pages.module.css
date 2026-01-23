@@ -1,0 +1,21 @@
+.container {
+  width: 100%;
+  min-height: 100vh;
+  background: #f4f6fa;
+}
+
+.main {
+  width: 100%;
+  margin: 0;
+  padding: 16px 12px;
+  min-height: 300px;
+}
+
+/* Dark mode */
+:global(body.dark) .container {
+  background: #181a20;
+}
+
+:global(body.dark) .main {
+  background: #181a20;
+}

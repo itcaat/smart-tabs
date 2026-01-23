@@ -1,0 +1,19 @@
+{
+  "name": "smart-tabs",
+  "version": "1.0.7",
+  "description": "Smart Tabs replaces your new tab page with a powerful dashboard that automatically groups your open tabs by website.",
+  "main": "index.js",
+  "scripts": {
+    "build": "next build && node out.js",
+    "dev": "next dev"
+  },
+  "keywords": ["chrome-extension", "tabs", "new-tab"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "next": "^13.4.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "glob": "^10.2.3"
+  }
+}

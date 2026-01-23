@@ -1,0 +1,45 @@
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 16px;
+  background: #fff;
+  z-index: 100;
+  border-top: 1px solid #e0e0e0;
+}
+
+.footer a {
+  color: #666;
+  text-decoration: none;
+  margin: 0 12px;
+  font-size: 0.9em;
+  transition: color 0.2s;
+}
+
+.footer a:hover {
+  color: #333;
+}
+
+.separator {
+  color: #ccc;
+}
+
+/* Dark mode */
+:global(body.dark) .footer {
+  background: #181a20;
+  border-top-color: #444857;
+}
+
+:global(body.dark) .footer a {
+  color: #b0b4bb;
+}
+
+:global(body.dark) .footer a:hover {
+  color: #ffe082;
+}
+
+:global(body.dark) .separator {
+  color: #444857;
+}

@@ -1,0 +1,39 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 24px;
+  position: sticky;
+  top: 0;
+  background: #f4f6fa;
+  z-index: 10;
+}
+
+.button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  font-size: 1em;
+  cursor: pointer;
+  background: #fff;
+  color: #23262f;
+  transition: background 0.2s, color 0.2s;
+}
+
+.button:hover {
+  background: #f4f6fa;
+}
+
+/* Dark mode */
+:global(body.dark) .header {
+  background: #181a20;
+}
+
+:global(body.dark) .button {
+  background: #23262f;
+  color: #ffe082;
+  border: 1px solid #444857;
+}
+
+:global(body.dark) .button:hover {
+  background: #181a20;
+}

@@ -1,0 +1,75 @@
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
+  position: relative;
+}
+
+.tab:hover {
+  background: #e6f0ff;
+}
+
+.tab.removing {
+  opacity: 0;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  transition: opacity 0.3s, max-height 0.3s, margin 0.3s, padding 0.3s;
+  overflow: hidden;
+}
+
+.favicon {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  object-fit: contain;
+}
+
+.title {
+  font-size: 0.98em;
+  color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.closeButton {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #b0b4bb;
+  font-size: 1.1em;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.closeButton:hover {
+  background: #ffeaea;
+  color: #e00;
+}
+
+/* Dark mode */
+:global(body.dark) .tab:hover {
+  background: #2a2d34;
+}
+
+:global(body.dark) .title {
+  color: #f5f6fa;
+  text-shadow: 0 1px 2px #23262f;
+}
+
+:global(body.dark) .closeButton {
+  color: #e0e0e0;
+}
+
+:global(body.dark) .closeButton:hover {
+  background: #3a2323;
+  color: #ffb4b4;
+}
