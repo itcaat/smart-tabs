@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import styles from '../../styles/Pages.module.css';
 import Header from '../Header';
 import SpeedDial from '../SpeedDial';
 import Footer from '../Footer';
 import Modal from '../Modal';
+import Kitty from '../Kitty';
 
 // Check if Chrome API is available (client-side only)
 const isChromeAvailable = () => typeof chrome !== 'undefined' && typeof chrome.tabs !== 'undefined';
@@ -17,6 +18,18 @@ export default function Index() {
   const [searchQuery, setSearchQuery] = useState('');
   const [theme, setTheme] = useState('light');
   const [duplicateCount, setDuplicateCount] = useState(0);
+  const [forceKitty, setForceKitty] = useState(false);
+  const [speedDialRef, setSpeedDialRef] = useState(null);
+  
+  // Callback to receive SpeedDial container ref
+  const handleContainerRef = useCallback((ref) => {
+    setSpeedDialRef(ref);
+  }, []);
+  
+  // Handle kitty click to wake it up
+  const handleKittyClick = useCallback(() => {
+    setForceKitty(true);
+  }, []);
   
   // Modal state
   const [modalConfig, setModalConfig] = useState({
@@ -296,6 +309,7 @@ export default function Index() {
           onCloseTab={handleCloseTab}
           onCloseGroup={handleCloseGroup}
           onActivateTab={handleActivateTab}
+          onContainerRef={handleContainerRef}
         />
       </main>
       <Footer />
@@ -311,6 +325,13 @@ export default function Index() {
         cancelText="Cancel"
         showDontAskAgain={modalConfig.showDontAskAgain}
         onDontAskAgainChange={handleDontAskAgainChange}
+      />
+      
+      <Kitty 
+        tabCount={tabs.length} 
+        containerRef={speedDialRef} 
+        forceShow={forceKitty}
+        onWakeUp={handleKittyClick}
       />
     </div>
   );

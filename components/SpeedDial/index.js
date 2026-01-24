@@ -35,8 +35,15 @@ function groupTabsByDomain(tabs) {
   return groups;
 }
 
-export default function SpeedDial({ tabs, searchQuery, onCloseTab, onCloseGroup, onActivateTab }) {
+export default function SpeedDial({ tabs, searchQuery, onCloseTab, onCloseGroup, onActivateTab, forceKitty, onContainerRef }) {
   const containerRef = useRef(null);
+  
+  // Share container ref with parent
+  useEffect(() => {
+    if (onContainerRef) {
+      onContainerRef(containerRef);
+    }
+  }, [onContainerRef]);
   const [pinnedDomains, setPinnedDomainsState] = useState([]);
 
   useEffect(() => {
