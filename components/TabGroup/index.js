@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styles from './TabGroup.module.css';
 import TabItem from '../TabItem';
+import { useTranslation } from '../../lib/i18n';
 
 function createFaviconUrl(url) {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(url)}&sz=32`;
@@ -24,6 +25,7 @@ export default function TabGroup({
   onCloseGroup,
   onActivateTab 
 }) {
+  const { t } = useTranslation();
   const [isRemoving, setIsRemoving] = useState(false);
 
   const handlePin = (e) => {
@@ -54,14 +56,14 @@ export default function TabGroup({
         <button 
           className={styles.pinButton}
           onClick={handlePin}
-          title={isPinned ? 'Unpin group' : 'Pin group'}
+          title={isPinned ? t('unpinGroup') : t('pinGroup')}
         >
           {isPinned ? '📌' : '📍'}
         </button>
         <button 
           className={styles.closeAllButton}
           onClick={handleCloseAll}
-          title="Close all tabs in this group"
+          title={t('closeAllInGroup')}
         >
           ✖
         </button>

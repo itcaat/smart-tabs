@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import styles from './Header.module.css';
 import ThemeToggle from '../ThemeToggle';
+import { useTranslation } from '../../lib/i18n';
 
 export default function Header({ 
   theme, 
@@ -11,6 +12,7 @@ export default function Header({
   onSearchChange,
   onSearchSubmit
 }) {
+  const { t } = useTranslation();
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -39,14 +41,14 @@ export default function Header({
         className={styles.button}
         onClick={onRemoveDuplicates}
       >
-        {duplicateCount > 0 ? `Remove duplicates(${duplicateCount})` : 'Remove duplicates'}
+        {duplicateCount > 0 ? t('removeDuplicatesCount', { count: duplicateCount }) : t('removeDuplicates')}
       </button>
       
       <input
         ref={inputRef}
         type="text"
         className={styles.searchInput}
-        placeholder="Search tabs or domains...press enter for googling"
+        placeholder={t('searchPlaceholder')}
         autoComplete="off"
         value={searchValue}
         onChange={(e) => onSearchChange(e.target.value)}

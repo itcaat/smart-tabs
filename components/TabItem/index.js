@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import styles from './TabItem.module.css';
+import { useTranslation } from '../../lib/i18n';
 
 function createFaviconUrl(url) {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(url)}&sz=32`;
 }
 
 export default function TabItem({ tab, onClose, onActivate }) {
+  const { t } = useTranslation();
   const [isRemoving, setIsRemoving] = useState(false);
 
   const handleClose = (e) => {
@@ -33,7 +35,7 @@ export default function TabItem({ tab, onClose, onActivate }) {
       <button 
         className={styles.closeButton}
         onClick={handleClose}
-        title="Close tab"
+        title={t('closeTab')}
       >
         ✕
       </button>

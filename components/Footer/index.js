@@ -1,9 +1,11 @@
 import styles from './Footer.module.css';
+import { useTranslation } from '../../lib/i18n';
 
 // Check if Chrome API is available (client-side only)
 const isChromeAvailable = () => typeof chrome !== 'undefined' && typeof chrome.tabs !== 'undefined';
 
 export default function Footer() {
+  const { t } = useTranslation();
   const handleRateClick = (e) => {
     e.preventDefault();
     const storeUrl = 'https://chrome.google.com/webstore/detail/inogfehnhcebnnojoifmabiccedlllpl';
@@ -23,11 +25,11 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <a href="#" onClick={handleRateClick}>
-        Rate Extension
+        {t('rateExtension')}
       </a>
       <span className={styles.separator}>|</span>
       <a href="#" onClick={handleDonateClick}>
-        Donate
+        {t('donate')}
       </a>
     </footer>
   );

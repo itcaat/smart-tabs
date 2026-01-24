@@ -5,7 +5,8 @@ import SpeedDial from '../SpeedDial';
 import Footer from '../Footer';
 import Modal from '../Modal';
 import Kitty from '../Kitty';
-import OnboardingTip from '../OnboardingTip';
+import { useTranslation } from '../../lib/i18n';
+// import OnboardingTip from '../OnboardingTip'; // TODO: use later
 
 // Check if Chrome API is available (client-side only)
 const isChromeAvailable = () => typeof chrome !== 'undefined' && typeof chrome.tabs !== 'undefined';
@@ -15,6 +16,7 @@ const PREF_SKIP_CLOSE_GROUP = 'skipCloseGroupConfirm';
 const PREF_SKIP_REMOVE_DUPLICATES = 'skipRemoveDuplicatesConfirm';
 
 export default function Index() {
+  const { t } = useTranslation();
   const [tabs, setTabs] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [theme, setTheme] = useState('light');
@@ -177,8 +179,8 @@ export default function Index() {
       if (duplicateTabIds.length === 0) {
         setModalConfig({
           isOpen: true,
-          title: 'No Duplicates',
-          message: 'No duplicate tabs found.',
+          title: t('noDuplicates'),
+          message: t('noDuplicatesFound'),
           type: 'info',
           onConfirm: closeModal,
           showDontAskAgain: false,
@@ -201,8 +203,8 @@ export default function Index() {
       
       setModalConfig({
         isOpen: true,
-        title: 'Remove Duplicates',
-        message: `Remove ${duplicateTabIds.length} duplicate tab(s)?`,
+        title: t('removeDuplicatesTitle'),
+        message: t('removeDuplicatesConfirm', { count: duplicateTabIds.length }),
         type: 'danger',
         onConfirm: () => {
           doRemove();
@@ -256,8 +258,8 @@ export default function Index() {
     
     setModalConfig({
       isOpen: true,
-      title: 'Close All Tabs',
-      message: `Close ALL ${tabsToClose.length} tab(s) for ${domain}?`,
+      title: t('closeAllTabs'),
+      message: t('closeAllTabsConfirm', { count: tabsToClose.length, domain }),
       type: 'danger',
       onConfirm: () => {
         doClose();
@@ -322,8 +324,8 @@ export default function Index() {
         type={modalConfig.type}
         onConfirm={modalConfig.onConfirm}
         onCancel={closeModal}
-        confirmText={modalConfig.type === 'info' ? 'OK' : 'Yes, do it'}
-        cancelText="Cancel"
+        confirmText={modalConfig.type === 'info' ? t('ok') : t('yesDoIt')}
+        cancelText={t('cancel')}
         showDontAskAgain={modalConfig.showDontAskAgain}
         onDontAskAgainChange={handleDontAskAgainChange}
       />
@@ -335,7 +337,7 @@ export default function Index() {
         onWakeUp={handleKittyClick}
       />
       
-      <OnboardingTip />
+      {/* <OnboardingTip /> */}
     </div>
   );
 }

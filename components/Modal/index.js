@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import styles from './Modal.module.css';
+import { useTranslation } from '../../lib/i18n';
 
 export default function Modal({ 
   isOpen, 
@@ -7,13 +8,14 @@ export default function Modal({
   message, 
   onConfirm, 
   onCancel,
-  confirmText = 'OK',
-  cancelText = 'Cancel',
+  confirmText,
+  cancelText,
   type = 'warning', // 'warning', 'danger', 'info'
   showDontAskAgain = false,
   onDontAskAgainChange,
   hint
 }) {
+  const { t } = useTranslation();
   const [dontAskAgain, setDontAskAgain] = useState(false);
 
   // Reset checkbox when modal opens
@@ -61,7 +63,7 @@ export default function Modal({
 
   // Detect OS for keyboard shortcut hint
   const isMac = typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-  const undoShortcut = isMac ? '⌘+Shift+T' : 'Ctrl+Shift+T';
+  const undoHint = isMac ? t('undoHintMac') : t('undoHintOther');
 
   return (
     <div className={styles.overlay} onClick={onCancel}>
@@ -83,15 +85,11 @@ export default function Modal({
         <p className={styles.message}>{message}</p>
         
         {hint && (
-          <p className={styles.hint}>
-            💡 {hint || `Tip: Use ${undoShortcut} to reopen closed tabs`}
-          </p>
+          <p className={styles.hint}>{hint}</p>
         )}
 
-        {type !== 'info' && (
-          <p className={styles.hint}>
-            💡 Tip: Use <kbd className={styles.kbd}>{undoShortcut}</kbd> to reopen closed tabs
-          </p>
+        {type !== 'info' && !hint && (
+          <p className={styles.hint}>{undoHint}</p>
         )}
         
         {showDontAskAgain && (
@@ -102,7 +100,7 @@ export default function Modal({
               onChange={handleCheckboxChange}
               className={styles.checkbox}
             />
-            <span>Don't ask me again</span>
+            <span>{t('dontAskAgain')}</span>
           </label>
         )}
         

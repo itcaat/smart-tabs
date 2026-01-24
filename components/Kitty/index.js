@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './Kitty.module.css';
+import { useTranslation } from '../../lib/i18n';
 
 const KITTY_SIZE = 24;
 const JUMP_DURATION = 500;
@@ -10,35 +11,8 @@ const MIN_TABS_TO_SHOW = 50;
 const BED_X = 20;
 const BED_Y_OFFSET = 60; // From bottom
 
-const SARCASTIC_PHRASES = [
-  // Про количество вкладок
-  "256 вкладок? Это мировой рекорд?",
-  "Chrome уже плачет...",
-  "RAM: 'За что мне это?'",
-  "У тебя больше вкладок, чем у меня жизней!",
-  "Это не вкладки, это коллекция!",
-  // Про прокрастинацию
-  "Все эти вкладки 'почитаю позже'...",
-  "Закладки? Не, вкладки надёжнее!",
-  "'Потом прочитаю' - легенда гласит...",
-  "Тут статья с 2019... всё ещё актуально?",
-  // Сарказм про работу
-  "Продуктивность на максимуме! 📈",
-  "Многозадачность level: GOD",
-  "Ты точно всё это читаешь?",
-  "Ctrl+Shift+T - твоя любимая комбинация?",
-  // Про кота
-  "Мне тут негде сидеть!",
-  "Я устал прыгать по вкладкам...",
-  "Закрой хоть что-нибудь, а?",
-  "Тут теплее, чем на ноутбуке!",
-  // Мемные
-  "This is fine. 🔥",
-  "Suffering from success",
-  "Первый раз? 😏",
-];
-
 export default function Kitty({ tabCount, containerRef, forceShow = false, onWakeUp }) {
+  const { t } = useTranslation();
   const [position, setPosition] = useState({ x: BED_X, y: -100 });
   const [state, setState] = useState('sleeping'); // sleeping, entering, walking, jumping, falling, stunned, returning, hidden
   const [direction, setDirection] = useState(1);
@@ -298,7 +272,8 @@ export default function Kitty({ tabCount, containerRef, forceShow = false, onWak
         if (progress < 1) {
           requestAnimationFrame(fallAnimate);
         } else {
-          const randomPhrase = SARCASTIC_PHRASES[Math.floor(Math.random() * SARCASTIC_PHRASES.length)];
+          const phrases = t('kittyPhrases');
+          const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
           setPhrase(randomPhrase);
           setState('stunned');
         }
@@ -360,7 +335,7 @@ export default function Kitty({ tabCount, containerRef, forceShow = false, onWak
             cursor: 'pointer',
           }}
           onClick={handleSleepingCatClick}
-          title="Тык! Разбуди котика"
+          title={t('wakeUpKitty')}
         >
           <div className={styles.zzz}>zZz</div>
           <div className={styles.sleepingCat}>

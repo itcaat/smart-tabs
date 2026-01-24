@@ -1,12 +1,15 @@
 import styles from './ThemeToggle.module.css';
+import { useTranslation } from '../../lib/i18n';
 
 export default function ThemeToggle({ isDark, onToggle }) {
+  const { t } = useTranslation();
+  
   return (
     <button 
       className={`${styles.toggle} ${isDark ? styles.dark : ''}`}
       onClick={onToggle}
-      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      aria-label="Toggle theme"
+      title={isDark ? t('switchToLight') : t('switchToDark')}
+      aria-label={t('toggleTheme')}
     >
       <div className={styles.track}>
         <div className={styles.stars}>
