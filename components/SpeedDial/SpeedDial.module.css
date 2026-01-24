@@ -1,0 +1,12 @@
+.speeddial {
+  position: relative;
+  width: 100%;
+  min-height: 100px;
+  overflow-x: hidden;
+}
+
+.error {
+  padding: 20px;
+  text-align: center;
+  color: #e00;
+}

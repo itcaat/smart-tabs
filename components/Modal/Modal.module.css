@@ -1,0 +1,214 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.icon {
+  font-size: 1.5em;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #23262f;
+}
+
+.message {
+  margin: 0 0 24px 0;
+  color: #555;
+  line-height: 1.5;
+  font-size: 0.95em;
+}
+
+.hint {
+  margin: 0 0 16px 0;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  color: #666;
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+
+.kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #e9ecef;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+  color: #495057;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #007bff;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cancelButton,
+.confirmButton {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.cancelButton {
+  background: #f0f0f0;
+  color: #555;
+}
+
+.cancelButton:hover {
+  background: #e0e0e0;
+}
+
+.confirmButton {
+  background: #007bff;
+  color: #fff;
+}
+
+.confirmButton:hover {
+  background: #0056b3;
+}
+
+.confirmButton.danger {
+  background: #dc3545;
+}
+
+.confirmButton.danger:hover {
+  background: #c82333;
+}
+
+.confirmButton.warning {
+  background: #f0ad4e;
+  color: #23262f;
+}
+
+.confirmButton.warning:hover {
+  background: #ec971f;
+}
+
+/* Dark mode */
+:global(body.dark) .modal {
+  background: #23262f;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+:global(body.dark) .title {
+  color: #f5f6fa;
+}
+
+:global(body.dark) .message {
+  color: #b0b4bb;
+}
+
+:global(body.dark) .cancelButton {
+  background: #2d3139;
+  color: #b0b4bb;
+}
+
+:global(body.dark) .cancelButton:hover {
+  background: #3a3f4a;
+}
+
+:global(body.dark) .hint {
+  background: #2d3139;
+  color: #9ca3af;
+}
+
+:global(body.dark) .kbd {
+  background: #3a3f4a;
+  border-color: #4a5060;
+  color: #d1d5db;
+}
+
+:global(body.dark) .checkboxLabel {
+  color: #9ca3af;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .modal {
+    padding: 20px;
+  }
+  
+  .title {
+    font-size: 1.1em;
+  }
+  
+  .buttons {
+    flex-direction: column-reverse;
+  }
+  
+  .cancelButton,
+  .confirmButton {
+    width: 100%;
+    padding: 12px;
+  }
+}

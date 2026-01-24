@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "NPM: publish zip archive",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"command": "rm -f out.zip && npm run build && zip -FSr out.zip ./out/*"
+		}
+	]
+}

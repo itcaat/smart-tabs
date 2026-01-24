@@ -1,0 +1,615 @@
+.kitty {
+  position: fixed;
+  width: 32px;
+  height: 24px;
+  z-index: 99999;
+  pointer-events: none;
+}
+
+.flipped {
+  transform: scaleX(-1);
+}
+
+.body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
+}
+
+/* Head - side view */
+.head {
+  position: absolute;
+  width: 12px;
+  height: 11px;
+  background: #e8923a;
+  border-radius: 50% 60% 50% 40%;
+  top: 3px;
+  left: 0;
+  z-index: 3;
+}
+
+/* Ear */
+.ear {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 7px solid #e8923a;
+  top: -4px;
+  left: 3px;
+  z-index: 4;
+}
+
+.ear::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 2px solid transparent;
+  border-right: 1px solid transparent;
+  border-bottom: 4px solid #ffb6c1;
+  top: 2px;
+  left: -2px;
+}
+
+/* Eye */
+.eye {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #fff;
+  border-radius: 50%;
+  top: 3px;
+  left: 2px;
+  z-index: 5;
+}
+
+.eye::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 3px;
+  background: #2a2a2a;
+  border-radius: 50%;
+  top: 0.5px;
+  left: 1px;
+  animation: blink 5s infinite;
+}
+
+@keyframes blink {
+  0%, 96%, 100% { transform: scaleY(1); }
+  98% { transform: scaleY(0.1); }
+}
+
+/* Nose */
+.nose {
+  position: absolute;
+  width: 3px;
+  height: 2px;
+  background: #d4756a;
+  border-radius: 50%;
+  top: 6px;
+  left: 0;
+  z-index: 5;
+}
+
+/* Torso */
+.torso {
+  position: absolute;
+  width: 18px;
+  height: 12px;
+  background: #e8923a;
+  border-radius: 50% 45% 45% 50%;
+  top: 6px;
+  left: 8px;
+  z-index: 2;
+}
+
+/* Stripes on body */
+.torso::before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 8px;
+  background: #d47a2a;
+  border-radius: 2px;
+  top: 2px;
+  left: 5px;
+  box-shadow: 5px 0 0 #d47a2a, 10px 0 0 #d47a2a;
+}
+
+/* Front leg - thigh and lower leg */
+.legFront {
+  position: absolute;
+  width: 5px;
+  height: 10px;
+  background: linear-gradient(to bottom, #e8923a 0%, #d47a2a 100%);
+  border-radius: 3px 3px 2px 2px;
+  bottom: 0;
+  left: 9px;
+  z-index: 3;
+  transform-origin: top center;
+}
+
+/* Paw */
+.legFront::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 3px;
+  background: #d47a2a;
+  border-radius: 3px;
+  bottom: -1px;
+  left: -1px;
+}
+
+/* Back leg - thicker thigh */
+.legBack {
+  position: absolute;
+  width: 6px;
+  height: 9px;
+  background: linear-gradient(to bottom, #d47a2a 0%, #c46a1a 100%);
+  border-radius: 4px 4px 2px 2px;
+  bottom: 0;
+  left: 18px;
+  z-index: 1;
+  transform-origin: top center;
+}
+
+/* Back paw */
+.legBack::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 3px;
+  background: #c46a1a;
+  border-radius: 3px;
+  bottom: -1px;
+  left: -1px;
+}
+
+/* Tail */
+.tail {
+  position: absolute;
+  width: 10px;
+  height: 4px;
+  background: #e8923a;
+  border-radius: 4px 8px 8px 4px;
+  right: -2px;
+  top: 6px;
+  transform-origin: left center;
+  animation: tailSway 2s ease-in-out infinite;
+  z-index: 1;
+}
+
+.tail::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 4px;
+  background: #e8923a;
+  border-radius: 50%;
+  right: -3px;
+  top: -2px;
+}
+
+@keyframes tailSway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(8deg); }
+}
+
+/* ===== RELAXED WALKING ===== */
+.moving .legFront {
+  animation: walkFrontLeg 0.35s ease-in-out infinite;
+}
+
+.moving .legBack {
+  animation: walkBackLeg 0.35s ease-in-out infinite;
+}
+
+@keyframes walkFrontLeg {
+  0%, 100% { transform: rotate(15deg) translateY(0); }
+  50% { transform: rotate(-15deg) translateY(-1px); }
+}
+
+@keyframes walkBackLeg {
+  0%, 100% { transform: rotate(-15deg) translateY(-1px); }
+  50% { transform: rotate(15deg) translateY(0); }
+}
+
+/* Entering/Leaving */
+.entering .legFront,
+.leaving .legFront {
+  animation: walkFrontLeg 0.4s ease-in-out infinite;
+}
+
+.entering .legBack,
+.leaving .legBack {
+  animation: walkBackLeg 0.4s ease-in-out infinite;
+}
+
+/* ===== JUMPING ===== */
+.jumping .body {
+  animation: jumpStretch 0.5s ease-out;
+}
+
+.jumping .legFront {
+  transform: rotate(-20deg) !important;
+  animation: none !important;
+}
+
+.jumping .legBack {
+  transform: rotate(15deg) !important;
+  animation: none !important;
+}
+
+@keyframes jumpStretch {
+  0% { transform: scaleX(-1) scaleY(0.9); }
+  30% { transform: scaleX(-1) scaleY(1.1); }
+  100% { transform: scaleX(-1) scaleY(1); }
+}
+
+/* ===== FALLING ===== */
+.falling .body {
+  animation: fallWobble 0.2s ease-in-out infinite alternate;
+}
+
+.falling .legFront {
+  animation: fallLegsFront 0.15s ease-in-out infinite alternate !important;
+}
+
+.falling .legBack {
+  animation: fallLegsBack 0.15s ease-in-out infinite alternate !important;
+}
+
+.falling .tail {
+  animation: fallTail 0.15s ease-in-out infinite alternate !important;
+}
+
+@keyframes fallWobble {
+  from { transform: scaleX(-1) rotate(-5deg); }
+  to { transform: scaleX(-1) rotate(5deg); }
+}
+
+@keyframes fallLegsFront {
+  from { transform: rotate(-25deg); }
+  to { transform: rotate(25deg); }
+}
+
+@keyframes fallLegsBack {
+  from { transform: rotate(25deg); }
+  to { transform: rotate(-25deg); }
+}
+
+@keyframes fallTail {
+  from { transform: rotate(-15deg); }
+  to { transform: rotate(20deg); }
+}
+
+/* ===== IDLE ===== */
+.walking:not(.moving) .body {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.walking:not(.moving) .tail {
+  animation: tailIdle 3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scaleX(-1); }
+  50% { transform: scaleX(-1) scaleY(1.02); }
+}
+
+@keyframes tailIdle {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(10deg); }
+}
+
+/* ===== STUNNED STATE ===== */
+.stunned .body {
+  animation: stunnedSit 1s ease-in-out infinite;
+}
+
+.stunned .tail {
+  animation: stunnedTail 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes stunnedSit {
+  0%, 100% { transform: scaleX(-1); }
+  50% { transform: scaleX(-1) translateY(-1px); }
+}
+
+@keyframes stunnedTail {
+  from { transform: rotate(-10deg); }
+  to { transform: rotate(5deg); }
+}
+
+/* ===== SPEECH BUBBLE ===== */
+.speechBubble {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #333;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  margin-bottom: 12px;
+  animation: bubbleAppear 0.3s ease-out;
+  max-width: 240px;
+  min-width: 120px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Keep text readable when cat is flipped */
+.flipped .speechBubble {
+  transform: translateX(-50%) scaleX(-1);
+}
+
+.speechBubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #fff;
+}
+
+@keyframes bubbleAppear {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(5px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+:global(body.dark) .speechBubble {
+  background: #3a3f4a;
+  color: #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+:global(body.dark) .speechBubble::after {
+  border-top-color: #3a3f4a;
+}
+
+/* ===== CAT BED (always visible) ===== */
+.catBed {
+  position: fixed;
+  z-index: 99998;
+  pointer-events: none;
+}
+
+.bed {
+  width: 50px;
+  height: 20px;
+  position: relative;
+}
+
+/* Bed base/bottom */
+.bed::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: linear-gradient(to bottom, #8B6914 0%, #6B4F0F 100%);
+  border-radius: 0 0 25px 25px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Bed cushion */
+.bedCushion {
+  position: absolute;
+  top: 0;
+  left: 3px;
+  right: 3px;
+  height: 16px;
+  background: linear-gradient(to bottom, #e8d4c4 0%, #d4c0b0 50%, #c4b0a0 100%);
+  border-radius: 50% 50% 40% 40%;
+  box-shadow: inset 0 -3px 6px rgba(0,0,0,0.1);
+}
+
+/* Bed rim/edge */
+.bedRim {
+  position: absolute;
+  top: -4px;
+  left: -2px;
+  right: -2px;
+  height: 10px;
+  background: linear-gradient(to bottom, #A67C52 0%, #8B6914 100%);
+  border-radius: 50% 50% 0 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Little paw prints on cushion */
+.bedCushion::after {
+  content: '🐾';
+  position: absolute;
+  font-size: 8px;
+  top: 5px;
+  left: 12px;
+  opacity: 0.3;
+}
+
+/* ===== SLEEPING CAT ===== */
+.kittyInBed {
+  position: fixed;
+  z-index: 99999;
+  pointer-events: none;
+}
+
+.sleepingCat {
+  position: relative;
+  width: 35px;
+  height: 20px;
+}
+
+.sleepingBody {
+  position: absolute;
+  width: 24px;
+  height: 16px;
+  background: #e8923a;
+  border-radius: 50%;
+  top: 4px;
+  left: 6px;
+}
+
+.sleepingBody::before {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 10px;
+  background: #d47a2a;
+  border-radius: 2px;
+  top: 3px;
+  left: 5px;
+  box-shadow: 5px 0 0 #d47a2a, 10px 0 0 #d47a2a;
+}
+
+.sleepingHead {
+  position: absolute;
+  width: 14px;
+  height: 12px;
+  background: #e8923a;
+  border-radius: 50%;
+  top: 0px;
+  left: 0;
+}
+
+/* Closed eyes */
+.sleepingHead::before {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 2px;
+  background: #333;
+  border-radius: 0 0 4px 4px;
+  top: 5px;
+  left: 5px;
+}
+
+.sleepingEar {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 6px solid #e8923a;
+  top: -4px;
+  left: 4px;
+}
+
+.sleepingEar::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 2px solid transparent;
+  border-right: 1px solid transparent;
+  border-bottom: 3px solid #ffb6c1;
+  top: 2px;
+  left: -2px;
+}
+
+.sleepingTail {
+  position: absolute;
+  width: 14px;
+  height: 5px;
+  background: #e8923a;
+  border-radius: 5px;
+  top: 8px;
+  right: -4px;
+  transform: rotate(15deg);
+}
+
+/* ZZZ Animation */
+.zzz {
+  position: absolute;
+  top: -30px;
+  left: 35px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #888;
+  font-style: italic;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+  animation: zzzFloat 2s ease-in-out infinite;
+}
+
+@keyframes zzzFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(-10deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+    opacity: 1;
+  }
+}
+
+/* Dark mode sleeping cat */
+:global(body.dark) .zzz {
+  color: #aaa;
+}
+
+:global(body.dark) .sleepingBody,
+:global(body.dark) .sleepingHead,
+:global(body.dark) .sleepingTail {
+  background: #f0a040;
+}
+
+:global(body.dark) .sleepingBody::before {
+  background: #e08830;
+  box-shadow: 5px 0 0 #e08830, 10px 0 0 #e08830;
+}
+
+:global(body.dark) .sleepingEar {
+  border-bottom-color: #f0a040;
+}
+
+:global(body.dark) .bedCushion {
+  background: linear-gradient(to bottom, #5a5045 0%, #4a4035 50%, #3a3025 100%);
+}
+
+:global(body.dark) .bedRim {
+  background: linear-gradient(to bottom, #6B5030 0%, #5B4020 100%);
+}
+
+:global(body.dark) .bed::before {
+  background: linear-gradient(to bottom, #5B4010 0%, #4B3008 100%);
+}
+
+/* ===== DARK MODE ===== */
+:global(body.dark) .head,
+:global(body.dark) .torso,
+:global(body.dark) .legFront,
+:global(body.dark) .tail,
+:global(body.dark) .tail::after {
+  background: #f0a040;
+}
+
+:global(body.dark) .torso::before {
+  background: #e08830;
+  box-shadow: 5px 0 0 #e08830, 10px 0 0 #e08830;
+}
+
+:global(body.dark) .legBack {
+  background: #e08830;
+}
+
+:global(body.dark) .ear {
+  border-bottom-color: #f0a040;
+}

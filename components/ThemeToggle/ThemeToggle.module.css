@@ -1,0 +1,208 @@
+.toggle {
+  position: relative;
+  width: 52px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 13px;
+  background: linear-gradient(180deg, #5c9ce6 0%, #a0c4f1 100%);
+  overflow: hidden;
+  transition: background 0.4s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dark .track {
+  background: linear-gradient(180deg, #1a1a2e 0%, #2d3a4f 100%);
+}
+
+/* Clouds for light mode */
+.clouds {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.dark .clouds {
+  opacity: 0;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+}
+
+.cloud:nth-child(1) {
+  width: 10px;
+  height: 7px;
+  right: 0;
+  top: -1px;
+  border-radius: 7px;
+}
+
+.cloud:nth-child(2) {
+  width: 7px;
+  height: 5px;
+  right: 6px;
+  top: 2px;
+  border-radius: 5px;
+}
+
+/* Stars for dark mode */
+.stars {
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dark .stars {
+  opacity: 1;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle 2s infinite;
+}
+
+.star:nth-child(1) { left: 3px; top: 6px; animation-delay: 0s; }
+.star:nth-child(2) { left: 10px; top: 4px; animation-delay: 0.3s; }
+.star:nth-child(3) { left: 5px; top: 14px; animation-delay: 0.6s; }
+.star:nth-child(4) { left: 14px; top: 10px; animation-delay: 0.9s; width: 1.5px; height: 1.5px; }
+.star:nth-child(5) { left: 18px; top: 6px; animation-delay: 1.2s; width: 1.5px; height: 1.5px; }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Thumb (knob) */
+.thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffd93d;
+  transition: transform 0.4s cubic-bezier(0.68, -0.15, 0.265, 1.15),
+              background 0.4s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.dark .thumb {
+  transform: translateX(26px);
+  background: #c9d1d9;
+}
+
+/* Sun rays effect */
+.sun {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffd93d;
+  border-radius: 50%;
+  box-shadow: 0 0 8px 2px rgba(255, 217, 61, 0.4);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dark .sun {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+/* Moon with craters */
+.moon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dark .moon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.crater {
+  position: absolute;
+  background: rgba(169, 177, 186, 0.6);
+  border-radius: 50%;
+}
+
+.crater:nth-child(1) {
+  width: 6px;
+  height: 6px;
+  top: 4px;
+  right: 4px;
+}
+
+.crater:nth-child(2) {
+  width: 4px;
+  height: 4px;
+  bottom: 5px;
+  left: 4px;
+}
+
+.crater:nth-child(3) {
+  width: 3px;
+  height: 3px;
+  top: 10px;
+  right: 9px;
+}
+
+/* Focus state */
+.toggle:focus-visible .track {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .toggle {
+    width: 44px;
+    height: 22px;
+  }
+  
+  .track {
+    border-radius: 11px;
+  }
+  
+  .thumb {
+    width: 18px;
+    height: 18px;
+    top: 2px;
+    left: 2px;
+  }
+  
+  .dark .thumb {
+    transform: translateX(22px);
+  }
+}
