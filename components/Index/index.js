@@ -5,6 +5,7 @@ import SpeedDial from '../SpeedDial';
 import Footer from '../Footer';
 import Modal from '../Modal';
 import Kitty from '../Kitty';
+import OnboardingTip from '../OnboardingTip';
 
 // Check if Chrome API is available (client-side only)
 const isChromeAvailable = () => typeof chrome !== 'undefined' && typeof chrome.tabs !== 'undefined';
@@ -333,6 +334,8 @@ export default function Index() {
         forceShow={forceKitty}
         onWakeUp={handleKittyClick}
       />
+      
+      <OnboardingTip />
     </div>
   );
 }

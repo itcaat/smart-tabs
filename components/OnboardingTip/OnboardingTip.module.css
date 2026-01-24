@@ -1,0 +1,152 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  z-index: 100000;
+}
+
+.tipContainer {
+  position: fixed;
+  top: 10px;
+  right: 80px;
+  z-index: 100001;
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tip {
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 360px;
+  position: relative;
+}
+
+/* Arrow pointing up to toolbar */
+.arrow {
+  position: absolute;
+  top: -8px;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #fffbe6;
+}
+
+.arrow::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -9px;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 9px solid #ffe58f;
+  z-index: -1;
+}
+
+.content {
+  margin-bottom: 12px;
+}
+
+.description {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #614700;
+}
+
+.steps {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 14px;
+  color: #614700;
+}
+
+.icon {
+  font-size: 18px;
+  background: #fff;
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+}
+
+.pinIcon {
+  font-size: 16px;
+  background: #fff;
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+}
+
+.button {
+  padding: 8px 16px;
+  background: #614700;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.button:hover {
+  background: #7a5a00;
+}
+
+/* Dark mode */
+:global(body.dark) .tip {
+  background: #2d2a1f;
+  border-color: #4a4530;
+}
+
+:global(body.dark) .arrow {
+  border-bottom-color: #2d2a1f;
+}
+
+:global(body.dark) .arrow::before {
+  border-bottom-color: #4a4530;
+}
+
+:global(body.dark) .description {
+  color: #e8d5a3;
+}
+
+:global(body.dark) .steps {
+  color: #e8d5a3;
+}
+
+:global(body.dark) .icon,
+:global(body.dark) .pinIcon {
+  background: #3a3628;
+  border-color: #4a4530;
+}
+
+:global(body.dark) .button {
+  background: #e8d5a3;
+  color: #2d2a1f;
+}
+
+:global(body.dark) .button:hover {
+  background: #f0e0b3;
+}
