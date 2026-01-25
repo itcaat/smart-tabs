@@ -5,7 +5,8 @@ import { useTranslation } from '../../lib/i18n';
 const isChromeAvailable = () => typeof chrome !== 'undefined' && typeof chrome.tabs !== 'undefined';
 
 export default function Footer() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  
   const handleRateClick = (e) => {
     e.preventDefault();
     const storeUrl = 'https://chrome.google.com/webstore/detail/inogfehnhcebnnojoifmabiccedlllpl';
@@ -16,7 +17,9 @@ export default function Footer() {
 
   const handleDonateClick = (e) => {
     e.preventDefault();
-    const donateUrl = 'https://tbank.ru/cf/oR5OW5IIUn';
+    const donateUrl = language === 'ru' 
+      ? 'https://pay.cloudtips.ru/p/ca4ff0b0'
+      : 'https://nowpayments.io/donation/itcaat';
     if (isChromeAvailable()) {
       chrome.tabs.create({ url: donateUrl });
     }
