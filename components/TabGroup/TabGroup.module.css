@@ -93,8 +93,6 @@
 
 /* Dark mode */
 :global(body.dark) .group {
-  background: #20222a !important;
-  border: none !important;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.28);
 }
 
