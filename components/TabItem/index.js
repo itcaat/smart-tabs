@@ -6,7 +6,7 @@ function createFaviconUrl(url) {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(url)}&sz=32`;
 }
 
-export default function TabItem({ tab, onClose, onActivate }) {
+export default function TabItem({ tab, onClose, onActivate, isOld, highlightOldTabs }) {
   const { t } = useTranslation();
   const [isRemoving, setIsRemoving] = useState(false);
 
@@ -18,9 +18,12 @@ export default function TabItem({ tab, onClose, onActivate }) {
     }, 320);
   };
 
+  // Highlight old tabs when mode is active
+  const shouldHighlight = highlightOldTabs && isOld;
+
   return (
     <li 
-      className={`${styles.tab} ${isRemoving ? styles.removing : ''}`}
+      className={`${styles.tab} ${isRemoving ? styles.removing : ''} ${shouldHighlight ? styles.highlightOld : ''}`}
       title={tab.title}
       onClick={onActivate}
     >

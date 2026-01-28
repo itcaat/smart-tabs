@@ -21,6 +21,8 @@ export default function Index() {
   const [searchQuery, setSearchQuery] = useState('');
   const [theme, setTheme] = useState('light');
   const [duplicateCount, setDuplicateCount] = useState(0);
+  const [oldTabsCount, setOldTabsCount] = useState(0);
+  const [highlightOldTabs, setHighlightOldTabs] = useState(false);
   const [forceKitty, setForceKitty] = useState(false);
   const [speedDialRef, setSpeedDialRef] = useState(null);
   
@@ -29,10 +31,13 @@ export default function Index() {
     setSpeedDialRef(ref);
   }, []);
   
-  // Handle kitty click to wake it up
+  // Handle kitty click to wake it up and show old tabs
   const handleKittyClick = useCallback(() => {
     setForceKitty(true);
-  }, []);
+    if (oldTabsCount > 0) {
+      setHighlightOldTabs(true);
+    }
+  }, [oldTabsCount]);
   
   // Modal state
   const [modalConfig, setModalConfig] = useState({
@@ -140,6 +145,45 @@ export default function Index() {
   useEffect(() => {
     calculateDuplicateCount();
   }, [tabs, calculateDuplicateCount]);
+
+  // Calculate old tabs count (> 1 day since last access)
+  // TODO: Change back to 7 days after testing
+  const calculateOldTabsCount = useCallback(() => {
+    const now = Date.now();
+    const ONE_DAY_MS = 1 * 24 * 60 * 60 * 1000;
+    let count = 0;
+    
+    for (const tab of tabs) {
+      if (!tab.url || tab.active) continue;
+      
+      try {
+        const url = new URL(tab.url);
+        if (url.protocol === 'chrome-extension:' || 
+            url.href === 'chrome://newtab/' ||
+            url.href.includes('chrome-extension://newtab')) {
+          continue;
+        }
+      } catch {
+        continue;
+      }
+      
+      const lastAccessed = tab.lastAccessed || now;
+      if ((now - lastAccessed) > ONE_DAY_MS) {
+        count++;
+      }
+    }
+    
+    setOldTabsCount(count);
+  }, [tabs]);
+
+  // Update old tabs count when tabs change
+  useEffect(() => {
+    calculateOldTabsCount();
+  }, [tabs, calculateOldTabsCount]);
+
+  const toggleHighlightOldTabs = () => {
+    setHighlightOldTabs(prev => !prev);
+  };
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -313,6 +357,7 @@ export default function Index() {
           onCloseGroup={handleCloseGroup}
           onActivateTab={handleActivateTab}
           onContainerRef={handleContainerRef}
+          highlightOldTabs={highlightOldTabs}
         />
       </main>
       <Footer />
@@ -335,6 +380,7 @@ export default function Index() {
         containerRef={speedDialRef} 
         forceShow={forceKitty}
         onWakeUp={handleKittyClick}
+        oldTabsCount={oldTabsCount}
       />
       
       {/* <OnboardingTip /> */}

@@ -11,7 +11,9 @@ const MIN_TABS_TO_SHOW = 50;
 const BED_X = 20;
 const BED_Y_OFFSET = 60; // From bottom
 
-export default function Kitty({ tabCount, containerRef, forceShow = false, onWakeUp }) {
+const OLD_TABS_HINT_DURATION = 10000; // 10 seconds
+
+export default function Kitty({ tabCount, containerRef, forceShow = false, onWakeUp, oldTabsCount = 0 }) {
   const { t } = useTranslation();
   const [position, setPosition] = useState({ x: BED_X, y: -100 });
   const [state, setState] = useState('sleeping'); // sleeping, entering, walking, jumping, falling, stunned, returning, hidden
@@ -19,11 +21,13 @@ export default function Kitty({ tabCount, containerRef, forceShow = false, onWak
   const [currentTileIndex, setCurrentTileIndex] = useState(-1);
   const [targetTile, setTargetTile] = useState(null);
   const [phrase, setPhrase] = useState('');
+  const [showOldTabsHint, setShowOldTabsHint] = useState(false);
   const animationRef = useRef(null);
   const walkPauseRef = useRef(0);
   const currentTileElementRef = useRef(null);
   const lastTileCountRef = useRef(0);
   const isActiveRef = useRef(false);
+  const hintTimerRef = useRef(null);
 
   // Get bed Y position
   const getBedY = useCallback(() => {
@@ -52,6 +56,40 @@ export default function Kitty({ tabCount, containerRef, forceShow = false, onWak
   useEffect(() => {
     setPosition({ x: BED_X, y: getBedY() });
   }, [getBedY]);
+
+  // Show old tabs hint with auto-hide timer
+  useEffect(() => {
+    if (oldTabsCount > 0 && state === 'sleeping') {
+      setShowOldTabsHint(true);
+      
+      // Clear previous timer
+      if (hintTimerRef.current) {
+        clearTimeout(hintTimerRef.current);
+      }
+      
+      // Auto-hide after 10 seconds
+      hintTimerRef.current = setTimeout(() => {
+        setShowOldTabsHint(false);
+      }, OLD_TABS_HINT_DURATION);
+    } else {
+      setShowOldTabsHint(false);
+    }
+    
+    return () => {
+      if (hintTimerRef.current) {
+        clearTimeout(hintTimerRef.current);
+      }
+    };
+  }, [oldTabsCount, state]);
+
+  // Close hint manually
+  const handleCloseHint = (e) => {
+    e.stopPropagation();
+    setShowOldTabsHint(false);
+    if (hintTimerRef.current) {
+      clearTimeout(hintTimerRef.current);
+    }
+  };
 
   // Handle show/hide transitions
   useEffect(() => {
@@ -335,8 +373,20 @@ export default function Kitty({ tabCount, containerRef, forceShow = false, onWak
             cursor: 'pointer',
           }}
           onClick={handleSleepingCatClick}
-          title={t('wakeUpKitty')}
+          title={oldTabsCount > 0 ? t('wakeUpKittyOldTabs') : t('wakeUpKitty')}
         >
+          {showOldTabsHint && (
+            <div className={`${styles.speechBubble} ${styles.oldTabsHint}`}>
+              <button 
+                className={styles.hintClose}
+                onClick={handleCloseHint}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+              {t('kittyOldTabsHint', { count: oldTabsCount })}
+            </div>
+          )}
           <div className={styles.zzz}>zZz</div>
           <div className={styles.sleepingCat}>
             <div className={styles.sleepingBody}></div>

@@ -35,7 +35,18 @@ function groupTabsByDomain(tabs) {
   return groups;
 }
 
-export default function SpeedDial({ tabs, searchQuery, onCloseTab, onCloseGroup, onActivateTab, forceKitty, onContainerRef }) {
+// Check if tab is "old" (not accessed for > 1 day)
+// TODO: Change back to 7 days after testing
+const ONE_DAY_MS = 1 * 24 * 60 * 60 * 1000;
+
+function isTabOld(tab) {
+  if (tab.active) return false;
+  const now = Date.now();
+  const lastAccessed = tab.lastAccessed || now;
+  return (now - lastAccessed) > ONE_DAY_MS;
+}
+
+export default function SpeedDial({ tabs, searchQuery, onCloseTab, onCloseGroup, onActivateTab, forceKitty, onContainerRef, highlightOldTabs }) {
   const containerRef = useRef(null);
   
   // Share container ref with parent
@@ -63,11 +74,16 @@ export default function SpeedDial({ tabs, searchQuery, onCloseTab, onCloseGroup,
       }
       
       const matchDomain = domain.toLowerCase().includes(query);
-      const filteredTabs = domainTabs.filter(tab =>
-        (tab.title && tab.title.toLowerCase().includes(query)) ||
-        (tab.url && tab.url.toLowerCase().includes(query)) ||
-        matchDomain
-      );
+      const filteredTabs = domainTabs
+        .filter(tab =>
+          (tab.title && tab.title.toLowerCase().includes(query)) ||
+          (tab.url && tab.url.toLowerCase().includes(query)) ||
+          matchDomain
+        )
+        .map(tab => ({
+          ...tab,
+          isOld: isTabOld(tab)
+        }));
       
       if (filteredTabs.length > 0) {
         result[domain] = filteredTabs;
@@ -201,6 +217,7 @@ export default function SpeedDial({ tabs, searchQuery, onCloseTab, onCloseGroup,
           onCloseTab={onCloseTab}
           onCloseGroup={() => onCloseGroup(domain)}
           onActivateTab={onActivateTab}
+          highlightOldTabs={highlightOldTabs}
         />
       ))}
     </div>
