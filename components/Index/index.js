@@ -146,11 +146,10 @@ export default function Index() {
     calculateDuplicateCount();
   }, [tabs, calculateDuplicateCount]);
 
-  // Calculate old tabs count (> 1 day since last access)
-  // TODO: Change back to 7 days after testing
+  // Calculate old tabs count (> 7 days since last access)
   const calculateOldTabsCount = useCallback(() => {
     const now = Date.now();
-    const ONE_DAY_MS = 1 * 24 * 60 * 60 * 1000;
+    const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
     let count = 0;
     
     for (const tab of tabs) {
@@ -168,7 +167,7 @@ export default function Index() {
       }
       
       const lastAccessed = tab.lastAccessed || now;
-      if ((now - lastAccessed) > ONE_DAY_MS) {
+      if ((now - lastAccessed) > ONE_WEEK_MS) {
         count++;
       }
     }

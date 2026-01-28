@@ -35,15 +35,14 @@ function groupTabsByDomain(tabs) {
   return groups;
 }
 
-// Check if tab is "old" (not accessed for > 1 day)
-// TODO: Change back to 7 days after testing
-const ONE_DAY_MS = 1 * 24 * 60 * 60 * 1000;
+// Check if tab is "old" (not accessed for > 7 days)
+const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 function isTabOld(tab) {
   if (tab.active) return false;
   const now = Date.now();
   const lastAccessed = tab.lastAccessed || now;
-  return (now - lastAccessed) > ONE_DAY_MS;
+  return (now - lastAccessed) > ONE_WEEK_MS;
 }
 
 export default function SpeedDial({ tabs, searchQuery, onCloseTab, onCloseGroup, onActivateTab, forceKitty, onContainerRef, highlightOldTabs }) {
