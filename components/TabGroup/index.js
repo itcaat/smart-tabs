@@ -27,7 +27,8 @@ export default function TabGroup({
   onTogglePin, 
   onCloseTab, 
   onCloseGroup,
-  onActivateTab 
+  onActivateTab,
+  highlightOldTabs
 }) {
   const { t } = useTranslation();
   const [isRemoving, setIsRemoving] = useState(false);
@@ -91,6 +92,8 @@ export default function TabGroup({
             tab={tab}
             onClose={() => onCloseTab(tab.id)}
             onActivate={() => onActivateTab(tab)}
+            isOld={tab.isOld}
+            highlightOldTabs={highlightOldTabs}
           />
         ))}
       </ul>
