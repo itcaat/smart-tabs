@@ -12,6 +12,7 @@ const BED_X = 20;
 const BED_Y_OFFSET = 60; // From bottom
 
 const OLD_TABS_HINT_DURATION = 10000; // 10 seconds
+const OLD_TABS_HINT_DISMISSED_KEY = 'oldTabsHintDismissed';
 
 export default function Kitty({ tabCount, containerRef, forceShow = false, onWakeUp, oldTabsCount = 0 }) {
   const { t } = useTranslation();
@@ -57,9 +58,15 @@ export default function Kitty({ tabCount, containerRef, forceShow = false, onWak
     setPosition({ x: BED_X, y: getBedY() });
   }, [getBedY]);
 
+  // Check if hint was dismissed
+  const wasHintDismissed = () => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem(OLD_TABS_HINT_DISMISSED_KEY) === 'true';
+  };
+
   // Show old tabs hint with auto-hide timer
   useEffect(() => {
-    if (oldTabsCount > 0 && state === 'sleeping') {
+    if (oldTabsCount > 0 && state === 'sleeping' && !wasHintDismissed()) {
       setShowOldTabsHint(true);
       
       // Clear previous timer
@@ -82,12 +89,16 @@ export default function Kitty({ tabCount, containerRef, forceShow = false, onWak
     };
   }, [oldTabsCount, state]);
 
-  // Close hint manually
+  // Close hint manually and remember
   const handleCloseHint = (e) => {
     e.stopPropagation();
     setShowOldTabsHint(false);
     if (hintTimerRef.current) {
       clearTimeout(hintTimerRef.current);
+    }
+    // Remember that user dismissed the hint
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(OLD_TABS_HINT_DISMISSED_KEY, 'true');
     }
   };
 
@@ -354,8 +365,22 @@ export default function Kitty({ tabCount, containerRef, forceShow = false, onWak
 
   // Handle click on sleeping cat
   const handleSleepingCatClick = () => {
-    if (onWakeUp) {
-      onWakeUp();
+    // Show Indiana Jones phrase when waking up with old tabs
+    if (oldTabsCount > 0) {
+      setShowOldTabsHint(false); // Hide the hint
+      setPhrase(t('kittyIndianaJones'));
+      
+      // Wait for phrase to be read, then wake up
+      setTimeout(() => {
+        setPhrase('');
+        if (onWakeUp) {
+          onWakeUp();
+        }
+      }, 2500);
+    } else {
+      if (onWakeUp) {
+        onWakeUp();
+      }
     }
   };
 
@@ -375,7 +400,12 @@ export default function Kitty({ tabCount, containerRef, forceShow = false, onWak
           onClick={handleSleepingCatClick}
           title={oldTabsCount > 0 ? t('wakeUpKittyOldTabs') : t('wakeUpKitty')}
         >
-          {showOldTabsHint && (
+          {phrase && (
+            <div className={`${styles.speechBubble} ${styles.oldTabsHint}`}>
+              {phrase}
+            </div>
+          )}
+          {!phrase && showOldTabsHint && (
             <div className={`${styles.speechBubble} ${styles.oldTabsHint}`}>
               <button 
                 className={styles.hintClose}
@@ -384,10 +414,10 @@ export default function Kitty({ tabCount, containerRef, forceShow = false, onWak
               >
                 ✕
               </button>
-              {t('kittyOldTabsHint', { count: oldTabsCount })}
+              {t('kittyOldTabsHint')}
             </div>
           )}
-          <div className={styles.zzz}>zZz</div>
+          {!phrase && <div className={styles.zzz}>zZz</div>}
           <div className={styles.sleepingCat}>
             <div className={styles.sleepingBody}></div>
             <div className={styles.sleepingHead}>
