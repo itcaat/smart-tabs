@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Smart Tabs",
   "short_name": "smart-tabs",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Smart Tabs replaces your new tab page with a powerful dashboard that automatically groups your open tabs by website.",
   "icons": {
     "16": "/icons/icon16.png",
