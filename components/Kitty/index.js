@@ -7,7 +7,6 @@ const JUMP_DURATION = 500;
 const WALK_SPEED = 1.2;
 const FALL_DURATION = 600;
 const STUNNED_DURATION = 5000;
-const MIN_TABS_TO_SHOW = 50;
 const BED_X = 20;
 const BED_Y_OFFSET = 60; // From bottom
 
@@ -51,7 +50,8 @@ export default function Kitty({ tabCount, containerRef, forceShow = false, onWak
     });
   }, [containerRef]);
 
-  const shouldShow = tabCount >= MIN_TABS_TO_SHOW || forceShow;
+  // Kitty only wakes up when clicked (forceShow)
+  const shouldShow = forceShow;
 
   // Initialize position
   useEffect(() => {
