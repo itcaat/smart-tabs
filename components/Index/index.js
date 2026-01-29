@@ -141,6 +141,18 @@ export default function Index() {
     loadTabs();
   }, [loadTabs]);
 
+  // Reload tabs when page becomes visible (user returns to tab)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadTabs();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [loadTabs]);
+
   // Update duplicate count when tabs change
   useEffect(() => {
     calculateDuplicateCount();
