@@ -10,6 +10,7 @@ import { useTranslation } from '../../lib/i18n';
 
 // Check if Chrome API is available (client-side only)
 const isChromeAvailable = () => typeof chrome !== 'undefined' && typeof chrome.tabs !== 'undefined';
+const isBookmarksAvailable = () => typeof chrome !== 'undefined' && typeof chrome.bookmarks !== 'undefined';
 
 // Preference keys for "don't ask again"
 const PREF_SKIP_CLOSE_GROUP = 'skipCloseGroupConfirm';
@@ -19,6 +20,7 @@ export default function Index() {
   const { t } = useTranslation();
   const [tabs, setTabs] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchBookmarks, setSearchBookmarks] = useState([]);
   const [theme, setTheme] = useState('light');
   const [duplicateCount, setDuplicateCount] = useState(0);
   const [oldTabsCount, setOldTabsCount] = useState(0);
@@ -338,6 +340,24 @@ export default function Index() {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
+    
+    // Search bookmarks when query is not empty
+    if (query.trim() && isBookmarksAvailable()) {
+      chrome.bookmarks.search(query.trim(), (results) => {
+        // Filter only bookmarks with URLs (not folders) and limit to 10
+        const bookmarks = results
+          .filter(b => b.url)
+          .slice(0, 10)
+          .map(b => ({
+            id: b.id,
+            title: b.title,
+            url: b.url,
+          }));
+        setSearchBookmarks(bookmarks);
+      });
+    } else {
+      setSearchBookmarks([]);
+    }
   };
 
   const handleSearchSubmit = (query) => {
@@ -364,6 +384,7 @@ export default function Index() {
         <SpeedDial 
           tabs={tabs}
           searchQuery={searchQuery}
+          searchBookmarks={searchBookmarks}
           onCloseTab={handleCloseTab}
           onCloseGroup={handleCloseGroup}
           onActivateTab={handleActivateTab}

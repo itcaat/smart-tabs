@@ -10,3 +10,119 @@
   text-align: center;
   color: #e00;
 }
+
+/* Bookmarks Group */
+.bookmarksGroup {
+  position: absolute;
+  min-width: 220px;
+  max-width: 320px;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 18px 16px 12px 16px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 2px solid #fbbf24;
+  box-shadow: 0 2px 12px rgba(251, 191, 36, 0.2);
+  transition: box-shadow 0.2s;
+}
+
+.bookmarksGroup:hover {
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+}
+
+.bookmarksHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.bookmarksIcon {
+  font-size: 20px;
+}
+
+.bookmarksTitle {
+  font-weight: 600;
+  font-size: 1.05em;
+  color: #92400e;
+}
+
+.bookmarksList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bookmarkItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.bookmarkItem:hover {
+  background: rgba(251, 191, 36, 0.3);
+}
+
+.bookmarkFavicon {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  object-fit: contain;
+}
+
+.bookmarkTitle {
+  font-size: 0.98em;
+  color: #78350f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* Dark mode */
+:global(body.dark) .bookmarksGroup {
+  background: linear-gradient(135deg, #422006 0%, #78350f 100%);
+  border-color: #f59e0b;
+}
+
+:global(body.dark) .bookmarksTitle {
+  color: #fcd34d;
+}
+
+:global(body.dark) .bookmarkItem:hover {
+  background: rgba(251, 191, 36, 0.2);
+}
+
+:global(body.dark) .bookmarkTitle {
+  color: #fef3c7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .bookmarksGroup {
+    min-width: 180px;
+    max-width: 280px;
+    padding: 14px 12px 10px 12px;
+  }
+  
+  .bookmarkTitle {
+    max-width: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bookmarksGroup {
+    min-width: 150px;
+    max-width: 100%;
+    padding: 12px 10px 8px 10px;
+  }
+  
+  .bookmarkTitle {
+    max-width: 100px;
+  }
+}

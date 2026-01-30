@@ -10,7 +10,8 @@
     "128": "/icons/icon128.png"
   },
   "permissions": [
-    "tabs"
+    "tabs",
+    "bookmarks"
   ],
   "chrome_url_overrides": {
     "newtab": "index.html"

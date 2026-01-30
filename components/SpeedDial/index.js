@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import styles from './SpeedDial.module.css';
 import TabGroup from '../TabGroup';
+import { useTranslation } from '../../lib/i18n';
 
 // Check if Chrome API is available (client-side only)
 const isChromeAvailable = () => typeof chrome !== 'undefined' && typeof chrome.tabs !== 'undefined';
@@ -45,7 +46,8 @@ function isTabOld(tab) {
   return (now - lastAccessed) > ONE_WEEK_MS;
 }
 
-export default function SpeedDial({ tabs, searchQuery, onCloseTab, onCloseGroup, onActivateTab, forceKitty, onContainerRef, highlightOldTabs }) {
+export default function SpeedDial({ tabs, searchQuery, searchBookmarks = [], onCloseTab, onCloseGroup, onActivateTab, forceKitty, onContainerRef, highlightOldTabs }) {
+  const { t } = useTranslation();
   const containerRef = useRef(null);
   
   // Share container ref with parent
@@ -204,8 +206,44 @@ export default function SpeedDial({ tabs, searchQuery, onCloseTab, onCloseGroup,
     return <div className={styles.error}>chrome.tabs API is not available. Please run as an extension!</div>;
   }
 
+  // Handle bookmark click - open in new tab
+  const handleBookmarkClick = (bookmark) => {
+    if (typeof chrome !== 'undefined' && chrome.tabs) {
+      chrome.tabs.create({ url: bookmark.url }, () => {
+        window.close();
+      });
+    }
+  };
+
   return (
     <div ref={containerRef} className={styles.speeddial}>
+      {/* Bookmarks tile - shown when searching */}
+      {searchBookmarks.length > 0 && (
+        <div data-group className={styles.bookmarksGroup}>
+          <div className={styles.bookmarksHeader}>
+            <span className={styles.bookmarksIcon}>⭐</span>
+            <span className={styles.bookmarksTitle}>{t('bookmarks')}</span>
+          </div>
+          <ul className={styles.bookmarksList}>
+            {searchBookmarks.map((bookmark) => (
+              <li 
+                key={bookmark.id}
+                className={styles.bookmarkItem}
+                onClick={() => handleBookmarkClick(bookmark)}
+                title={bookmark.url}
+              >
+                <img 
+                  src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(bookmark.url)}&sz=32`}
+                  alt=""
+                  className={styles.bookmarkFavicon}
+                />
+                <span className={styles.bookmarkTitle}>{bookmark.title || bookmark.url}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      
       {sortedGroups.map(([domain, domainTabs]) => (
         <TabGroup
           key={domain}
