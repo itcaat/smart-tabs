@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import styles from './Header.module.css';
 import ThemeToggle from '../ThemeToggle';
+import QuickLinks from '../QuickLinks';
 import { useTranslation } from '../../lib/i18n';
 
 export default function Header({ 
@@ -44,6 +45,8 @@ export default function Header({
         {duplicateCount > 0 ? t('removeDuplicatesCount', { count: duplicateCount }) : t('removeDuplicates')}
       </button>
       
+      <QuickLinks side="left" />
+      
       <input
         ref={inputRef}
         type="text"
@@ -54,6 +57,8 @@ export default function Header({
         onChange={(e) => onSearchChange(e.target.value)}
         onKeyDown={handleKeyDown}
       />
+      
+      <QuickLinks side="right" />
       
       <ThemeToggle 
         isDark={theme === 'dark'}
