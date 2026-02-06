@@ -1,6 +1,6 @@
 {
   "name": "smart-tabs",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Smart Tabs replaces your new tab page with a powerful dashboard that automatically groups your open tabs by website.",
   "main": "index.js",
   "scripts": {
