@@ -21,11 +21,60 @@ function saveQuickLinks(links) {
   window.dispatchEvent(new CustomEvent('quickLinksUpdated'));
 }
 
+// Local icons for specific sites
+// Note: specific subdomains should be listed before their parent domains
+const SITE_ICONS = {
+  'studio.youtube.com': '/site-icons/youtube-studio.png',
+  'youtube.com': '/site-icons/youtube.png',
+  'mail.google.com': '/site-icons/gmail.png',
+  'gmail.com': '/site-icons/gmail.png',
+  'calendar.google.com': '/site-icons/calendar.png',
+  'atlassian.net': '/site-icons/jira.png',
+  'jira.com': '/site-icons/jira.png',
+  'confluence.com': '/site-icons/confluence.png',
+  'trello.com': '/site-icons/trello.png',
+};
+
+// Path-based icons (checked before domain icons)
+const PATH_ICONS = [
+  { hostPattern: 'atlassian.net', pathPrefix: '/wiki/', icon: '/site-icons/confluence.png' },
+];
+
+function getLocalIcon(hostname, pathname = '') {
+  // Check path-based icons first
+  for (const rule of PATH_ICONS) {
+    if ((hostname === rule.hostPattern || hostname.endsWith('.' + rule.hostPattern)) 
+        && pathname.startsWith(rule.pathPrefix)) {
+      return rule.icon;
+    }
+  }
+  
+  // Check exact match
+  if (SITE_ICONS[hostname]) {
+    return SITE_ICONS[hostname];
+  }
+  // Check if it's a subdomain of any known site
+  for (const domain of Object.keys(SITE_ICONS)) {
+    if (hostname.endsWith('.' + domain)) {
+      return SITE_ICONS[domain];
+    }
+  }
+  return null;
+}
+
 function getFaviconUrl(url) {
   try {
-    const domain = new URL(url).hostname;
-    // Return array of fallback URLs to try
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+    const urlObj = new URL(url);
+    const hostname = urlObj.hostname.replace(/^www\./, '');
+    const pathname = urlObj.pathname;
+    
+    // Check for local icon first
+    const localIcon = getLocalIcon(hostname, pathname);
+    if (localIcon) {
+      return localIcon;
+    }
+    
+    return `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`;
   } catch {
     return null;
   }
