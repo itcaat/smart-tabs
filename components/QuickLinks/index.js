@@ -6,6 +6,8 @@ import { executeScript, initSandbox } from '../../lib/scriptRunner';
 
 const STORAGE_KEY = 'quickLinks';
 const LINKS_PER_SIDE = 8;
+const BOTTOM_LINKS_COUNT = 15;
+const BOTTOM_CENTER_INDEX = 7; // 0-based, center of 15
 
 function getQuickLinks() {
   if (typeof window === 'undefined') return [];
@@ -116,11 +118,19 @@ const data = JSON.parse(res);
 const temp = Math.round(data.current.temperature_2m);
 return { value: temp + '°', label: 'Moscow', color: temp > 0 ? '#f59e0b' : '#3b82f6' };`;
 
+// Donate URL logic (language-based)
+function getDonateUrl(language) {
+  return language === 'ru'
+    ? 'https://pay.cloudtips.ru/p/ca4ff0b0'
+    : 'https://nowpayments.io/donation/itcaat';
+}
+
 export default function QuickLinks({ side = 'left' }) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [allLinks, setAllLinks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
+  const [deleteConfirmIndex, setDeleteConfirmIndex] = useState(null);
 
   // Modal tab: 'link' or 'script'
   const [modalTab, setModalTab] = useState('link');
@@ -133,6 +143,7 @@ export default function QuickLinks({ side = 'left' }) {
   const [scriptName, setScriptName] = useState('');
   const [scriptIcon, setScriptIcon] = useState('');
   const [scriptCode, setScriptCode] = useState('');
+  const [scriptUrl, setScriptUrl] = useState('');
   const [scriptRefreshInterval, setScriptRefreshInterval] = useState(0);
 
   // Test result
@@ -159,8 +170,10 @@ export default function QuickLinks({ side = 'left' }) {
   }, [loadLinks]);
 
   // Calculate which slots this side manages
-  const startIndex = side === 'left' ? 0 : LINKS_PER_SIDE;
-  const endIndex = startIndex + LINKS_PER_SIDE;
+  const isBottom = side === 'bottom';
+  const slotCount = isBottom ? BOTTOM_LINKS_COUNT : LINKS_PER_SIDE;
+  const startIndex = side === 'left' ? 0 : side === 'right' ? LINKS_PER_SIDE : LINKS_PER_SIDE * 2;
+  const endIndex = startIndex + slotCount;
   
   // Get links for this side
   const sideLinks = [];
@@ -175,6 +188,7 @@ export default function QuickLinks({ side = 'left' }) {
     setScriptName('');
     setScriptIcon('');
     setScriptCode('');
+    setScriptUrl('');
     setScriptRefreshInterval(0);
     setTestResult(null);
     setTestLoading(false);
@@ -204,6 +218,7 @@ export default function QuickLinks({ side = 'left' }) {
         setScriptName(link.name || '');
         setScriptIcon(link.icon || '');
         setScriptCode(link.script || '');
+        setScriptUrl(link.url || '');
         setScriptRefreshInterval(link.refreshInterval || 0);
         // Clear link fields
         setInputUrl('');
@@ -216,6 +231,7 @@ export default function QuickLinks({ side = 'left' }) {
         setScriptName('');
         setScriptIcon('');
         setScriptCode('');
+        setScriptUrl('');
         setScriptRefreshInterval(0);
       }
       setIsModalOpen(true);
@@ -225,11 +241,21 @@ export default function QuickLinks({ side = 'left' }) {
   const handleDeleteClick = (e, slotIndex) => {
     e.preventDefault();
     e.stopPropagation();
-    const globalIndex = startIndex + slotIndex;
+    setDeleteConfirmIndex(slotIndex);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deleteConfirmIndex === null) return;
+    const globalIndex = startIndex + deleteConfirmIndex;
     const newLinks = [...allLinks];
     // Set to null instead of removing to keep positions fixed
     newLinks[globalIndex] = null;
     saveQuickLinks(newLinks);
+    setDeleteConfirmIndex(null);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmIndex(null);
   };
 
   const handleSave = () => {
@@ -282,11 +308,17 @@ export default function QuickLinks({ side = 'left' }) {
       return;
     }
 
+    let url = scriptUrl.trim();
+    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
+
     const newItem = {
       type: 'script',
-      name: name || 'Script',
+      name: name || '',
       script: code,
       icon: scriptIcon.trim() || '',
+      url: url || '',
       refreshInterval: scriptRefreshInterval,
       lastResult: testResult?.value ?? null,
     };
@@ -405,13 +437,30 @@ export default function QuickLinks({ side = 'left' }) {
       onResultCached={(value) => handleResultCached(slotIndex, value)}
       onEdit={(e) => handleEditClick(e, slotIndex)}
       onDelete={(e) => handleDeleteClick(e, slotIndex)}
+      popupPosition={isBottom ? 'top' : 'bottom'}
     />
+  );
+
+  const renderCoffeeItem = () => (
+    <div
+      key="coffee"
+      className={styles.coffeeItem}
+      onClick={() => handleLinkClick(getDonateUrl(language))}
+    >
+      <span className={styles.coffeePopup}>{t('donate')}</span>
+      <span className={styles.coffeeIcon}>☕</span>
+    </div>
   );
 
   return (
     <div className={styles.container}>
-      <div className={styles.grid}>
+      <div className={`${styles.grid} ${isBottom ? styles.gridBottom : ''}`}>
         {sideLinks.map((link, slotIndex) => {
+          // Fixed center coffee item for bottom row
+          if (isBottom && slotIndex === BOTTOM_CENTER_INDEX) {
+            return renderCoffeeItem();
+          }
+
           if (!link) {
             return (
               <div
@@ -504,6 +553,15 @@ export default function QuickLinks({ side = 'left' }) {
                   />
                 </div>
 
+                <input
+                  type="text"
+                  className={styles.input}
+                  placeholder={t('scriptUrl') || 'Link URL (optional, opens on click)'}
+                  value={scriptUrl}
+                  onChange={(e) => setScriptUrl(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+
                 <textarea
                   className={styles.codeEditor}
                   placeholder={SCRIPT_EXAMPLE}
@@ -593,6 +651,32 @@ export default function QuickLinks({ side = 'left' }) {
                 onClick={handleSave}
               >
                 {t('ok')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete confirmation modal */}
+      {deleteConfirmIndex !== null && (
+        <div className={styles.modalOverlay} onClick={handleDeleteCancel}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>{t('delete')}</h3>
+            <p className={styles.deleteMessage}>
+              {t('deleteQuickLinkConfirm') || 'Delete this shortcut?'}
+            </p>
+            <div className={styles.modalButtons}>
+              <button
+                className={styles.cancelButton}
+                onClick={handleDeleteCancel}
+              >
+                {t('cancel')}
+              </button>
+              <button
+                className={styles.deleteConfirmButton}
+                onClick={handleDeleteConfirm}
+              >
+                {t('yesDoIt') || 'Yes'}
               </button>
             </div>
           </div>

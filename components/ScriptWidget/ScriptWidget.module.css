@@ -12,7 +12,7 @@
   border-radius: 10px;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
-  overflow: hidden;
+  overflow: visible;
   gap: 1px;
   padding: 2px;
   box-sizing: border-box;
@@ -22,6 +22,77 @@
   transform: scale(1.08);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
   background: #f8fafc;
+}
+
+/* Hover popup label */
+.popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  background: #1f2937;
+  color: #f9fafb;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 5px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s, transform 0.15s;
+  z-index: 10;
+}
+
+/* Arrow */
+.popup::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-bottom-color: #1f2937;
+}
+
+.widget:hover .popup {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Popup above the element (for bottom panel) */
+.popupTop {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: #1f2937;
+  color: #f9fafb;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 5px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s, transform 0.15s;
+  z-index: 10;
+}
+
+.popupTop::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: #1f2937;
+}
+
+.widget:hover .popupTop {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .widgetError {
@@ -135,6 +206,24 @@
 
 :global(body.dark) .widgetError {
   border-color: #7f1d1d;
+}
+
+:global(body.dark) .popup {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+:global(body.dark) .popup::after {
+  border-bottom-color: #e5e7eb;
+}
+
+:global(body.dark) .popupTop {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+:global(body.dark) .popupTop::after {
+  border-top-color: #e5e7eb;
 }
 
 :global(body.dark) .value {

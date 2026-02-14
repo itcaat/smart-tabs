@@ -11,7 +11,7 @@ import styles from './ScriptWidget.module.css';
  *   onEdit: (e) => void
  *   onDelete: (e) => void
  */
-export default function ScriptWidget({ item, onResultCached, onEdit, onDelete }) {
+export default function ScriptWidget({ item, onResultCached, onEdit, onDelete, popupPosition = 'bottom' }) {
   const [result, setResult] = useState(
     item.lastResult ? { value: item.lastResult } : null
   );
@@ -68,12 +68,29 @@ export default function ScriptWidget({ item, onResultCached, onEdit, onDelete })
     error ? `Error: ${error}` : null
   ].filter(Boolean).join(' | ');
 
+  const popupLabel = item.name || '';
+  const popupClass = popupPosition === 'top' ? styles.popupTop : styles.popup;
+
+  const handleClick = () => {
+    if (item.url) {
+      if (typeof chrome !== 'undefined' && chrome.tabs) {
+        chrome.tabs.create({ url: item.url }, () => window.close());
+      } else {
+        window.open(item.url, '_blank');
+      }
+    } else {
+      runScript();
+    }
+  };
+
   return (
     <div
       className={`${styles.widget} ${error ? styles.widgetError : ''}`}
-      title={tooltip}
-      onClick={() => runScript()}
+      onClick={handleClick}
     >
+      {/* Hover popup label (only if name is set) */}
+      {popupLabel && <span className={popupClass}>{popupLabel}</span>}
+
       {/* Icon / emoji */}
       {item.icon && (
         <span className={styles.icon}>{item.icon}</span>
