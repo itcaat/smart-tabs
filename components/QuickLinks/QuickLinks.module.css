@@ -328,14 +328,7 @@
   align-items: flex-start;
 }
 
-.iconInput {
-  width: 56px !important;
-  min-width: 56px;
-  flex: none !important;
-  text-align: center;
-  font-size: 18px;
-  padding: 10px 8px;
-}
+/* .iconInput removed - replaced by EmojiPicker component */
 
 /* Code editor textarea */
 .codeEditor {

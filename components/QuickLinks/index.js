@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './QuickLinks.module.css';
 import { useTranslation } from '../../lib/i18n';
 import ScriptWidget from '../ScriptWidget';
+import EmojiPicker from '../EmojiPicker';
 import { executeScript, initSandbox } from '../../lib/scriptRunner';
 
 const STORAGE_KEY = 'quickLinks';
@@ -547,14 +548,9 @@ export default function QuickLinks({ side = 'left' }) {
                     autoFocus
                     style={{ flex: 1 }}
                   />
-                  <input
-                    type="text"
-                    className={`${styles.input} ${styles.iconInput}`}
-                    placeholder="Icon"
+                  <EmojiPicker
                     value={widgetIcon}
-                    onChange={(e) => setWidgetIcon(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    maxLength={2}
+                    onChange={(emoji) => setWidgetIcon(emoji)}
                   />
                 </div>
 
