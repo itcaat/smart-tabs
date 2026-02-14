@@ -110,13 +110,18 @@ const REFRESH_OPTIONS = [
   { value: 900, label: '15m' },
 ];
 
-const SCRIPT_EXAMPLE = `// Weather in your city (open-meteo.com, no API key)
+const WIDGET_CODE_EXAMPLE = `// Weather in your city (open-meteo.com, no API key)
 const res = await fetchData(
   'https://api.open-meteo.com/v1/forecast?latitude=55.75&longitude=37.62&current=temperature_2m'
 );
 const data = JSON.parse(res);
 const temp = Math.round(data.current.temperature_2m);
 return { value: temp + '°', label: 'Moscow', color: temp > 0 ? '#f59e0b' : '#3b82f6' };`;
+
+// Helper: check if item is a widget (supports both 'widget' and legacy 'script' type)
+function isWidgetItem(item) {
+  return item && (item.type === 'widget' || item.type === 'script');
+}
 
 // Donate URL logic (language-based)
 function getDonateUrl(language) {
@@ -132,19 +137,19 @@ export default function QuickLinks({ side = 'left' }) {
   const [editingIndex, setEditingIndex] = useState(null);
   const [deleteConfirmIndex, setDeleteConfirmIndex] = useState(null);
 
-  // Modal tab: 'link' or 'script'
+  // Modal tab: 'link' or 'widget'
   const [modalTab, setModalTab] = useState('link');
 
   // Link fields
   const [inputUrl, setInputUrl] = useState('');
   const [inputName, setInputName] = useState('');
 
-  // Script fields
-  const [scriptName, setScriptName] = useState('');
-  const [scriptIcon, setScriptIcon] = useState('');
-  const [scriptCode, setScriptCode] = useState('');
-  const [scriptUrl, setScriptUrl] = useState('');
-  const [scriptRefreshInterval, setScriptRefreshInterval] = useState(0);
+  // Widget fields
+  const [widgetName, setWidgetName] = useState('');
+  const [widgetIcon, setWidgetIcon] = useState('');
+  const [widgetCode, setWidgetCode] = useState('');
+  const [widgetUrl, setWidgetUrl] = useState('');
+  const [widgetRefreshInterval, setWidgetRefreshInterval] = useState(0);
 
   // Test result
   const [testResult, setTestResult] = useState(null);
@@ -185,11 +190,11 @@ export default function QuickLinks({ side = 'left' }) {
     setModalTab('link');
     setInputUrl('');
     setInputName('');
-    setScriptName('');
-    setScriptIcon('');
-    setScriptCode('');
-    setScriptUrl('');
-    setScriptRefreshInterval(0);
+    setWidgetName('');
+    setWidgetIcon('');
+    setWidgetCode('');
+    setWidgetUrl('');
+    setWidgetRefreshInterval(0);
     setTestResult(null);
     setTestLoading(false);
     setTestError(null);
@@ -213,13 +218,13 @@ export default function QuickLinks({ side = 'left' }) {
       setTestLoading(false);
       setTestError(null);
 
-      if (link.type === 'script') {
-        setModalTab('script');
-        setScriptName(link.name || '');
-        setScriptIcon(link.icon || '');
-        setScriptCode(link.script || '');
-        setScriptUrl(link.url || '');
-        setScriptRefreshInterval(link.refreshInterval || 0);
+      if (isWidgetItem(link)) {
+        setModalTab('widget');
+        setWidgetName(link.name || '');
+        setWidgetIcon(link.icon || '');
+        setWidgetCode(link.script || '');
+        setWidgetUrl(link.url || '');
+        setWidgetRefreshInterval(link.refreshInterval || 0);
         // Clear link fields
         setInputUrl('');
         setInputName('');
@@ -227,12 +232,12 @@ export default function QuickLinks({ side = 'left' }) {
         setModalTab('link');
         setInputUrl(link.url || '');
         setInputName(link.name || '');
-        // Clear script fields
-        setScriptName('');
-        setScriptIcon('');
-        setScriptCode('');
-        setScriptUrl('');
-        setScriptRefreshInterval(0);
+        // Clear widget fields
+        setWidgetName('');
+        setWidgetIcon('');
+        setWidgetCode('');
+        setWidgetUrl('');
+        setWidgetRefreshInterval(0);
       }
       setIsModalOpen(true);
     }
@@ -259,8 +264,8 @@ export default function QuickLinks({ side = 'left' }) {
   };
 
   const handleSave = () => {
-    if (modalTab === 'script') {
-      handleSaveScript();
+    if (modalTab === 'widget') {
+      handleSaveWidget();
     } else {
       handleSaveLink();
     }
@@ -300,26 +305,26 @@ export default function QuickLinks({ side = 'left' }) {
     setEditingIndex(null);
   };
 
-  const handleSaveScript = () => {
-    const code = scriptCode.trim();
-    const name = scriptName.trim();
+  const handleSaveWidget = () => {
+    const code = widgetCode.trim();
+    const name = widgetName.trim();
     if (!code) {
       setIsModalOpen(false);
       return;
     }
 
-    let url = scriptUrl.trim();
+    let url = widgetUrl.trim();
     if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
       url = 'https://' + url;
     }
 
     const newItem = {
-      type: 'script',
+      type: 'widget',
       name: name || '',
       script: code,
-      icon: scriptIcon.trim() || '',
+      icon: widgetIcon.trim() || '',
       url: url || '',
-      refreshInterval: scriptRefreshInterval,
+      refreshInterval: widgetRefreshInterval,
       lastResult: testResult?.value ?? null,
     };
 
@@ -336,8 +341,8 @@ export default function QuickLinks({ side = 'left' }) {
     setEditingIndex(null);
   };
 
-  const handleTestScript = async () => {
-    const code = scriptCode.trim();
+  const handleTestWidget = async () => {
+    const code = widgetCode.trim();
     if (!code) return;
 
     setTestLoading(true);
@@ -358,7 +363,7 @@ export default function QuickLinks({ side = 'left' }) {
   const handleResultCached = useCallback((slotIndex, value) => {
     const globalIndex = startIndex + slotIndex;
     const links = getQuickLinks();
-    if (links[globalIndex] && links[globalIndex].type === 'script') {
+    if (links[globalIndex] && isWidgetItem(links[globalIndex])) {
       links[globalIndex].lastResult = value;
       // Save silently without triggering re-render loop
       if (typeof window !== 'undefined') {
@@ -430,7 +435,7 @@ export default function QuickLinks({ side = 'left' }) {
     </div>
   );
 
-  const renderScriptItem = (item, slotIndex) => (
+  const renderWidgetItem = (item, slotIndex) => (
     <ScriptWidget
       key={slotIndex}
       item={item}
@@ -474,8 +479,8 @@ export default function QuickLinks({ side = 'left' }) {
             );
           }
 
-          if (link.type === 'script') {
-            return renderScriptItem(link, slotIndex);
+          if (isWidgetItem(link)) {
+            return renderWidgetItem(link, slotIndex);
           }
 
           // Default: link type (backward compatible with items without type field)
@@ -498,10 +503,10 @@ export default function QuickLinks({ side = 'left' }) {
                 Link
               </button>
               <button
-                className={`${styles.tab} ${modalTab === 'script' ? styles.tabActive : ''}`}
-                onClick={() => setModalTab('script')}
+                className={`${styles.tab} ${modalTab === 'widget' ? styles.tabActive : ''}`}
+                onClick={() => setModalTab('widget')}
               >
-                Script
+                Widget
               </button>
             </div>
 
@@ -528,16 +533,16 @@ export default function QuickLinks({ side = 'left' }) {
               </>
             )}
 
-            {/* Script tab */}
-            {modalTab === 'script' && (
+            {/* Widget tab */}
+            {modalTab === 'widget' && (
               <>
                 <div className={styles.scriptRow}>
                   <input
                     type="text"
                     className={styles.input}
-                    placeholder={t('scriptName') || 'Name (e.g. CPU Usage)'}
-                    value={scriptName}
-                    onChange={(e) => setScriptName(e.target.value)}
+                    placeholder={t('widgetName') || 'Name (e.g. CPU Usage)'}
+                    value={widgetName}
+                    onChange={(e) => setWidgetName(e.target.value)}
                     onKeyDown={handleKeyDown}
                     autoFocus
                     style={{ flex: 1 }}
@@ -546,8 +551,8 @@ export default function QuickLinks({ side = 'left' }) {
                     type="text"
                     className={`${styles.input} ${styles.iconInput}`}
                     placeholder="Icon"
-                    value={scriptIcon}
-                    onChange={(e) => setScriptIcon(e.target.value)}
+                    value={widgetIcon}
+                    onChange={(e) => setWidgetIcon(e.target.value)}
                     onKeyDown={handleKeyDown}
                     maxLength={2}
                   />
@@ -556,17 +561,17 @@ export default function QuickLinks({ side = 'left' }) {
                 <input
                   type="text"
                   className={styles.input}
-                  placeholder={t('scriptUrl') || 'Link URL (optional, opens on click)'}
-                  value={scriptUrl}
-                  onChange={(e) => setScriptUrl(e.target.value)}
+                  placeholder={t('widgetUrl') || 'Link URL (optional, opens on click)'}
+                  value={widgetUrl}
+                  onChange={(e) => setWidgetUrl(e.target.value)}
                   onKeyDown={handleKeyDown}
                 />
 
                 <textarea
                   className={styles.codeEditor}
-                  placeholder={SCRIPT_EXAMPLE}
-                  value={scriptCode}
-                  onChange={(e) => setScriptCode(e.target.value)}
+                  placeholder={WIDGET_CODE_EXAMPLE}
+                  value={widgetCode}
+                  onChange={(e) => setWidgetCode(e.target.value)}
                   onKeyDown={(e) => {
                     // Allow Tab key in textarea
                     if (e.key === 'Tab') {
@@ -576,7 +581,7 @@ export default function QuickLinks({ side = 'left' }) {
                       const val = e.target.value;
                       e.target.value = val.substring(0, start) + '  ' + val.substring(end);
                       e.target.selectionStart = e.target.selectionEnd = start + 2;
-                      setScriptCode(e.target.value);
+                      setWidgetCode(e.target.value);
                     } else if (e.key === 'Escape') {
                       setIsModalOpen(false);
                     }
@@ -594,8 +599,8 @@ export default function QuickLinks({ side = 'left' }) {
                       {REFRESH_OPTIONS.map((opt) => (
                         <button
                           key={opt.value}
-                          className={`${styles.refreshOption} ${scriptRefreshInterval === opt.value ? styles.refreshOptionActive : ''}`}
-                          onClick={() => setScriptRefreshInterval(opt.value)}
+                          className={`${styles.refreshOption} ${widgetRefreshInterval === opt.value ? styles.refreshOptionActive : ''}`}
+                          onClick={() => setWidgetRefreshInterval(opt.value)}
                           type="button"
                         >
                           {opt.label}
@@ -607,11 +612,11 @@ export default function QuickLinks({ side = 'left' }) {
                   {/* Test button + result */}
                   <button
                     className={styles.testButton}
-                    onClick={handleTestScript}
-                    disabled={testLoading || !scriptCode.trim()}
+                    onClick={handleTestWidget}
+                    disabled={testLoading || !widgetCode.trim()}
                     type="button"
                   >
-                    {testLoading ? '...' : (t('testScript') || 'Test')}
+                    {testLoading ? '...' : (t('testWidget') || 'Test')}
                   </button>
 
                   {testResult && (
@@ -634,7 +639,7 @@ export default function QuickLinks({ side = 'left' }) {
                 </div>
 
                 <p className={styles.scriptHint}>
-                  {t('scriptHint') || 'Use fetchData(url) for HTTP requests. Return { value, label?, color? }.'}
+                  {t('widgetHint') || 'Use fetchData(url) for HTTP requests. Return { value, label?, color? }.'}
                 </p>
               </>
             )}

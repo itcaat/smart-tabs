@@ -103,9 +103,9 @@ smart-tabs/
 └── package.json       # Project dependencies
 ```
 
-## Script Widgets
+## Widgets
 
-You can add custom JavaScript widgets to your speed dial slots. Click any empty "+" slot, switch to the **Script** tab, and write code that fetches data from any API. Your script has access to `fetchData(url, options)` for HTTP requests and must return `{ value, label?, color? }`.
+You can add custom JavaScript widgets to your speed dial slots. Click any empty "+" slot, switch to the **Widget** tab, and write code that fetches data from any API. Your code has access to `fetchData(url, options)` for HTTP requests and must return `{ value, label?, color? }`.
 
 ### Example: Weather
 
