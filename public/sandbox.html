@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Script Sandbox</title>
+</head>
+<body>
+<script>
+  // Sandboxed page for executing user scripts.
+  // This page can use eval() because it's declared in manifest.json "sandbox".
+  // It has NO access to chrome.* APIs or the parent page's DOM.
+  // Network requests are proxied through the parent via postMessage.
+
+  // Pending fetch requests: requestId -> { resolve, reject }
+  const pendingFetches = new Map();
+  let fetchRequestId = 0;
+
+  // fetchData function available to user scripts.
+  // Proxies fetch through the parent page to avoid CORS issues.
+  async function fetchData(url, options) {
+    return new Promise((resolve, reject) => {
+      const requestId = ++fetchRequestId;
+      pendingFetches.set(requestId, { resolve, reject });
+
+      parent.postMessage({
+        type: 'fetchRequest',
+        requestId: requestId,
+        url: url,
+        options: options || {}
+      }, '*');
+
+      // Timeout for individual fetch: 15s
+      setTimeout(() => {
+        if (pendingFetches.has(requestId)) {
+          pendingFetches.delete(requestId);
+          reject(new Error('Fetch timeout (15s)'));
+        }
+      }, 15000);
+    });
+  }
+
+  // Listen for messages from parent
+  window.addEventListener('message', async function(event) {
+    const msg = event.data;
+
+    // Handle fetch response from parent
+    if (msg.type === 'fetchResponse') {
+      const pending = pendingFetches.get(msg.requestId);
+      if (pending) {
+        pendingFetches.delete(msg.requestId);
+        if (msg.error) {
+          pending.reject(new Error(msg.error));
+        } else {
+          pending.resolve(msg.body);
+        }
+      }
+      return;
+    }
+
+    // Handle script execution request
+    if (msg.type === 'executeScript') {
+      const { scriptId, code } = msg;
+
+      try {
+        // Wrap user code in an async function with fetchData available
+        const fn = new Function('fetchData',
+          '"use strict"; return (async () => {\n' + code + '\n})();'
+        );
+
+        const result = await fn(fetchData);
+
+        parent.postMessage({
+          type: 'scriptResult',
+          scriptId: scriptId,
+          result: result
+        }, '*');
+      } catch (err) {
+        parent.postMessage({
+          type: 'scriptError',
+          scriptId: scriptId,
+          error: err.message || String(err)
+        }, '*');
+      }
+    }
+  });
+
+  // Signal that sandbox is ready
+  parent.postMessage({ type: 'sandboxReady' }, '*');
+</script>
+</body>
+</html>

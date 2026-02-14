@@ -103,6 +103,52 @@ smart-tabs/
 └── package.json       # Project dependencies
 ```
 
+## Script Widgets
+
+You can add custom JavaScript widgets to your speed dial slots. Click any empty "+" slot, switch to the **Script** tab, and write code that fetches data from any API. Your script has access to `fetchData(url, options)` for HTTP requests and must return `{ value, label?, color? }`.
+
+### Example: Weather
+
+Shows current temperature for a city using the free [Open-Meteo API](https://open-meteo.com/) (no API key required).
+
+```javascript
+const res = await fetchData(
+  'https://api.open-meteo.com/v1/forecast?latitude=55.75&longitude=37.62&current=temperature_2m'
+);
+const data = JSON.parse(res);
+const temp = Math.round(data.current.temperature_2m);
+return { value: temp + '°', label: 'Moscow', color: temp > 0 ? '#f59e0b' : '#3b82f6' };
+```
+
+### Example: Bitcoin Price
+
+Shows the current BTC price in USD via the [Binance API](https://binance-docs.github.io/apidocs/) (no API key required, no strict rate limits).
+
+```javascript
+const res = await fetchData(
+  'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT'
+);
+const data = JSON.parse(res);
+const price = Math.round(Number(data.price));
+const formatted = price >= 1000 ? Math.round(price / 1000) + 'k' : price;
+return { value: '$' + formatted, label: 'BTC', color: price >= 80000 ? '#22c55e' : '#ef4444' };
+```
+
+### Example: VictoriaMetrics / Prometheus Query
+
+Queries VictoriaMetrics (or Prometheus) for the sum of `http_requests_total` over the last 5 minutes. Replace the URL with your own instance.
+
+```javascript
+const query = 'sum(increase(http_requests_total[5m]))';
+const res = await fetchData(
+  'https://victoriametrics.example.com/api/v1/query?query=' + encodeURIComponent(query)
+);
+const data = JSON.parse(res);
+const val = data.data.result[0]?.value[1];
+const rounded = Math.round(Number(val));
+return { value: rounded, label: 'Reqs/5m', color: '#10b981' };
+```
+
 ## Privacy
 
 Smart Tabs does not collect or transmit any personal data. All tab information is processed locally in your browser.

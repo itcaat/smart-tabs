@@ -1,0 +1,186 @@
+/* Script widget slot - same 40x40 as QuickLink items */
+.widget {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  overflow: hidden;
+  gap: 1px;
+  padding: 2px;
+  box-sizing: border-box;
+}
+
+.widget:hover {
+  transform: scale(1.08);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  background: #f8fafc;
+}
+
+.widgetError {
+  border-color: #fca5a5;
+}
+
+/* Icon (emoji) */
+.icon {
+  font-size: 12px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Value text */
+.value {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  color: #1f2937;
+  max-width: 36px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Loading pulse dot */
+.loadingDot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 5px;
+  height: 5px;
+  background: #6366f1;
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Error dot */
+.errorDot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 5px;
+  height: 5px;
+  background: #ef4444;
+  border-radius: 50%;
+}
+
+/* Edit/Delete buttons - match QuickLinks styling */
+.editButton,
+.deleteButton {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  font-size: 9px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.widget:hover .editButton,
+.widget:hover .deleteButton {
+  opacity: 1;
+}
+
+.editButton {
+  top: -4px;
+  left: -4px;
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.editButton:hover {
+  background: #c7d2fe;
+  transform: scale(1.1);
+}
+
+.deleteButton {
+  top: -4px;
+  right: -4px;
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.deleteButton:hover {
+  background: #fecaca;
+  transform: scale(1.1);
+}
+
+/* Dark mode */
+:global(body.dark) .widget {
+  background: #23262f;
+  border-color: #444857;
+}
+
+:global(body.dark) .widget:hover {
+  background: #2d3139;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+:global(body.dark) .widgetError {
+  border-color: #7f1d1d;
+}
+
+:global(body.dark) .value {
+  color: #f3f4f6;
+}
+
+:global(body.dark) .editButton {
+  background: #312e81;
+  color: #a5b4fc;
+}
+
+:global(body.dark) .deleteButton {
+  background: #450a0a;
+  color: #fca5a5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .widget {
+    width: 36px;
+    height: 36px;
+  }
+
+  .icon {
+    font-size: 10px;
+  }
+
+  .value {
+    font-size: 9px;
+    max-width: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .widget {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+
+  .icon {
+    font-size: 9px;
+  }
+
+  .value {
+    font-size: 8px;
+    max-width: 28px;
+  }
+}
